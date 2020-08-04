@@ -5,8 +5,11 @@ import 'dart:convert';
 import 'dart:async';
 
 class PatientProvider with ChangeNotifier {
+  bool isLoading = false;
   Patient currentPatient;
   Future<Map<String, dynamic>> createPatient(data) async {
+    isLoading = true;
+    notifyListeners();
     // final String apiUrl = "https://reqres.in/api/users";
     // final http.Response response = await HttpService.getpatientdetails();
     final http.Response response = await http.post(
@@ -17,8 +20,12 @@ class PatientProvider with ChangeNotifier {
     // final Map<String, dynamic> responseData = json.decode(response.body);
     if (response.statusCode == 200) {
       currentPatient = Patient.fromJson(data);
+      isLoading = false;
+      notifyListeners();
       return {'success': true, 'patient': currentPatient};
     } else {
+      isLoading = false;
+      notifyListeners();
       return {'success': false, 'error': "something went wrong"};
     }
   }

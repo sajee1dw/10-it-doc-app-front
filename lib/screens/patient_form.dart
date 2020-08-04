@@ -1,13 +1,15 @@
-import 'package:doc/models/info.dart';
-import 'package:doc/models/patient.dart';
+import 'package:doc/models/timeSlot.dart';
+import 'package:doc/providers/doctorinfo.dart';
 import 'package:provider/provider.dart';
 import '../providers/patient.dart';
-import 'package:doc/providers/doctorinfo.dart';
 import 'package:doc/screens/receipt.dart';
 import 'package:flutter/material.dart';
 // import 'package:navigate/pages/third.dart';
 
 class PatientForm extends StatefulWidget {
+  final TimeSlot timeSlot;
+  PatientForm(this.timeSlot);
+
   @override
   _PatientFormState createState() => _PatientFormState();
 }
@@ -25,14 +27,15 @@ class _PatientFormState extends State<PatientForm> {
   //  _formKey and _autoValidate
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
-  String _patientname;
-  String _age;
-  String _phone;
+  String name;
+  String patientname;
+  String age;
+  String phone;
 
   @override
   Widget build(BuildContext context) {
-    // final InfolistProvider infolistProvider =
-    //     Provider.of<InfolistProvider>(context, listen: true);
+    final InfolistProvider infolistProvider =
+        Provider.of<InfolistProvider>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
           title: Center(
@@ -67,10 +70,12 @@ class _PatientFormState extends State<PatientForm> {
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0),
                       child: Text(
-                        'Dr. Nobody Noman (MBBS)', //Set Doctor Name
-                        // infolistProvider.currentInfo != null
-                        //     ? infolistProvider.currentInfo.docName
-                        //     : "",
+                        //'Dr. Nobody Noman (MBBS)', //Set Doctor Name
+                        infolistProvider.currentInfo != null
+                            ? 'Dr : ' +
+                                infolistProvider.currentInfo.docName
+                                    .toUpperCase()
+                            : "",
                         style: TextStyle(
                           fontFamily: 'Louis',
                           color: Colors.white,
@@ -83,10 +88,10 @@ class _PatientFormState extends State<PatientForm> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(17.0, 5.0, 0, 0),
                       child: Text(
-                        'No.20, Nowhere, Noland', //Set Doctor Address
-                        // infolistProvider.currentInfo != null
-                        //     ? infolistProvider.currentInfo.docAddress
-                        //     : "",
+                        //'No.20, Nowhere, Noland', //Set Doctor Address
+                        infolistProvider.currentInfo != null
+                            ? infolistProvider.currentInfo.docAddress
+                            : "",
                         style: TextStyle(
                           color: Colors.teal[100],
                           fontSize: 16,
@@ -137,7 +142,7 @@ class _PatientFormState extends State<PatientForm> {
                             ),
                           ),
                           Text(
-                            '2020 - 12 - 12', //set date
+                            '${widget.timeSlot.date}', //set date
                             style: TextStyle(
                               fontFamily: 'Sansation',
                               color: Colors.teal[100],
@@ -169,7 +174,7 @@ class _PatientFormState extends State<PatientForm> {
                             ),
                           ),
                           Text(
-                            '8:15am', //set time
+                            '${widget.timeSlot.startTime}', //set time
                             style: TextStyle(
                               fontFamily: 'Sansation',
                               color: Colors.teal[100],
@@ -239,7 +244,7 @@ class _PatientFormState extends State<PatientForm> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 15.0),
               child: Text(
-                'Who make the reservation?',
+                'Who make the reservation?'.toUpperCase(),
                 style: TextStyle(
                   fontFamily: 'Sansation',
                   color: Colors.teal[200],
@@ -268,6 +273,7 @@ class _PatientFormState extends State<PatientForm> {
             ),
           ),
           keyboardType: TextInputType.text,
+          validator: validateName,
           onSaved: (String value) {
             _formData['Name'] = value;
           },
@@ -277,7 +283,7 @@ class _PatientFormState extends State<PatientForm> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 15.0),
               child: Text(
-                'Please enter patient details below.',
+                'Please enter patient details below.'.toUpperCase(),
                 style: TextStyle(
                   fontFamily: 'Sansation',
                   color: Colors.teal[200],
@@ -306,12 +312,7 @@ class _PatientFormState extends State<PatientForm> {
             ),
           ),
           keyboardType: TextInputType.text,
-          validator: (String arg) {
-            if (arg.isEmpty)
-              return 'Name must not be Empty!';
-            else
-              return null;
-          },
+          validator: validatepatientName,
           onSaved: (String value) {
             _formData['Patient Name'] = value;
           },
@@ -336,6 +337,7 @@ class _PatientFormState extends State<PatientForm> {
             ),
           ),
           keyboardType: TextInputType.text,
+          validator: validateIDnumber,
           onSaved: (String value) {
             _formData['IDNumber'] = value;
           },
@@ -360,6 +362,7 @@ class _PatientFormState extends State<PatientForm> {
             ),
           ),
           keyboardType: TextInputType.text,
+          validator: validateAge,
           onSaved: (String value) {
             _formData['Age'] = value;
           },
@@ -384,6 +387,7 @@ class _PatientFormState extends State<PatientForm> {
             ),
           ),
           keyboardType: TextInputType.text,
+          validator: validateAddress,
           onSaved: (String value) {
             _formData['Address'] = value;
           },
@@ -408,65 +412,51 @@ class _PatientFormState extends State<PatientForm> {
             ),
           ),
           keyboardType: TextInputType.phone,
-          validator: (String value) {
-            String patttern = r'(^(?:[+0]9)?[0-9]{10}$)';
-            RegExp regExp = new RegExp(patttern);
-            if (value.length == 0) {
-              return 'Please enter mobile number';
-            } else if (!regExp.hasMatch(value)) {
-              return 'Please enter valid mobile number';
-            }
-            return null;
-          },
-          // (String value) {
-          //   if ((value.length == 10) && value.isEmpty)
-          //     return 'Mobile number is Null or Incorrect!';
-          //   else
-          //     return null;
-          // },
+          validator: validateMobile,
           onSaved: (String value) {
             _formData['Mobile'] = value;
           },
         ),
-        // TextField(
-        //   decoration: InputDecoration(
-        //       border: InputBorder.none, hintText: 'Enter a search term'),
-        // ),
         new SizedBox(
           height: 10.0,
         ),
-
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: RaisedButton(
             onPressed: () async {
-              final PatientProvider patient =
-                  Provider.of<PatientProvider>(context, listen: false);
-              final Map<String, dynamic> _formData = {
-                'eventName': 'bookDoc',
-                'startTime': '2020-07-21T01:30:00',
-                'endTime': '2020-07-21T01:45:00',
-                'name': nameController.text,
-                'patientName': patientController.text,
-                'idno': idController.text,
-                'age': ageController.text,
-                'address': addressController.text,
-                'mobile': mobileController.text,
-              };
+              if (_validateInputs()) {
+                final PatientProvider patient =
+                    Provider.of<PatientProvider>(context, listen: false);
+                // _formKey.currentState.validate();
+                final Map<String, dynamic> _formData = {
+                  'eventName':
+                      nameController.text + ': Has Booked This Time Slot',
+                  'startTime':
+                      '${widget.timeSlot.date}T${widget.timeSlot.startTime}:00',
+                  'endTime':
+                      '${widget.timeSlot.date}T${widget.timeSlot.endTime}:00',
+                  'name': nameController.text,
+                  'patientName': patientController.text,
+                  'idno': idController.text,
+                  'age': ageController.text,
+                  'address': addressController.text,
+                  'mobile': mobileController.text,
+                };
 
-              final Map<String, dynamic> successInfo =
-                  await patient.createPatient(_formData);
-              print(_formData);
+                final Map<String, dynamic> successInfo =
+                    await patient.createPatient(_formData);
+                print(_formData);
 
-              if (successInfo['success']) {
-                print(patient.currentPatient.startTime);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ReceiptPage(patient: patient.currentPatient)));
-              } else {
-                print("something went wrong");
+                if (successInfo['success']) {
+                  print(patient.currentPatient.startTime);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ReceiptPage(patient: patient.currentPatient)));
+                } else {
+                  print("something went wrong");
+                }
               }
             },
             color: Colors.teal[700],
@@ -499,14 +489,82 @@ class _PatientFormState extends State<PatientForm> {
     );
   }
 
-  void _validateInputs() {
+  String validateName(String value) {
+    String patttern = r'(^[a-zA-Z ]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Name is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Name must be a-z and A-Z";
+    }
+    return null;
+  }
+
+  String validatepatientName(String value) {
+    String patttern = r'(^[a-zA-Z ]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Name is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Name must be a-z and A-Z";
+    }
+    return null;
+  }
+
+  String validateIDnumber(String value) {
+    //String patttern = r'(^[0-9]*$)';
+    //RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "ID number is Required";
+    } else if (value.length != 11) {
+      return "ID number must 11 digits";
+    }
+    return null;
+  }
+
+  String validateAge(String value) {
+    // String patttern = r'(^[0-9]*$)';
+    // RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Age is Required";
+    } else if (value.length <= 1) {
+      return "Age must 2 digits";
+    }
+    return null;
+  }
+
+  String validateMobile(String value) {
+    String patttern = r'(^[0-9]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "Mobile is Required";
+    } else if (value.length != 10) {
+      return "Mobile number must 10 digits";
+    } else if (!regExp.hasMatch(value)) {
+      return "Mobile Number must be digits";
+    }
+    return null;
+  }
+
+  String validateAddress(String value) {
+    //String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    //RegExp regExp = new RegExp(pattern);
+    if (value.length == 0) {
+      return "Address is Required";
+    } else {
+      return null;
+    }
+  }
+
+  bool _validateInputs() {
     if (_formKey.currentState.validate()) {
-      _formKey.currentState
-          .save(); //data are valid - save data to out variables
+      _formKey.currentState.save();
+      return true; //data are valid - save data to out variables
     } else {
       setState(() {
         _autoValidate = true; //all data are not valid - start auto validation.
       });
+      return false;
     }
   }
 }

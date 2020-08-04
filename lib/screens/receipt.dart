@@ -1,16 +1,25 @@
 import 'package:doc/models/patient.dart';
 import 'package:flutter/material.dart';
+import 'package:doc/screens/selection.dart';
+import 'package:doc/providers/doctorinfo.dart';
+import 'package:provider/provider.dart';
 
 class ReceiptPage extends StatelessWidget {
-
-   
- final Patient patient;
+  final Patient patient;
   ReceiptPage({Key key, @required this.patient}) : super(key: key);
-  
 
   @override
   Widget build(BuildContext context) {
-    //print(patient.name);
+    final InfolistProvider infolistProvider =
+        Provider.of<InfolistProvider>(context, listen: true);
+    var startDateTime = ("${patient.startTime}");
+    print(startDateTime);
+    
+
+   // var x = DateFormat('y-M-d').format(startDateTime);
+    //var y = DateFormat('H').format(startDateTime);
+   // print(x);
+   // print(y);
     return Scaffold(
       appBar: AppBar(
           title: Center(
@@ -27,7 +36,7 @@ class ReceiptPage extends StatelessWidget {
       )),
       body: Column(children: <Widget>[
         Container(
-          height: 80.0,
+          height: 100.0,
           color: Colors.teal,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -82,7 +91,8 @@ class ReceiptPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '2020 - 12 - 12', //set date
+                          //'2020 - 12 - 12', //set date
+                          startDateTime.split(" ")[0],
                           style: TextStyle(
                             fontFamily: 'Sansation',
                             color: Colors.teal[100],
@@ -114,7 +124,8 @@ class ReceiptPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '8:15am', //set time
+                          // '8:15am', //set time
+                          (startDateTime.split(" ")[1]).split(".")[0],
                           style: TextStyle(
                             fontFamily: 'Sansation',
                             color: Colors.teal[100],
@@ -149,7 +160,13 @@ class ReceiptPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                            'Dr. Nobody Noman (MBBS)',
+                            // 'Dr. Nobody Noman (MBBS)',
+
+                            infolistProvider.currentInfo != null
+                                ? 'Dr : ' +
+                                    infolistProvider.currentInfo.docName
+                                        .toUpperCase()
+                                : "",
                             style: TextStyle(
                                 fontFamily: 'Louis',
                                 color: Colors.white,
@@ -158,7 +175,10 @@ class ReceiptPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 7.0),
                           child: Text(
-                            'No.20, Nowhere, Noland',
+                              //'No.20, Nowhere, Noland',
+                              infolistProvider.currentInfo != null
+                                  ? infolistProvider.currentInfo.docAddress
+                                  : "",
                               style: TextStyle(
                                 color: Colors.teal[100],
                                 fontSize: 16,
@@ -182,9 +202,7 @@ class ReceiptPage extends StatelessWidget {
                                               fontWeight: FontWeight.w600),
                                           children: <TextSpan>[
                                             TextSpan(
-                                                text:
-                                                    //'Person who booking', //fetch name
-                                               (" ${patient.name}"),
+                                                text: (" ${patient.name}"),
                                                 style: TextStyle(
                                                     fontFamily: 'Louis',
                                                     color: Colors.white,
@@ -206,9 +224,7 @@ class ReceiptPage extends StatelessWidget {
                                               fontWeight: FontWeight.w600),
                                           children: <TextSpan>[
                                             TextSpan(
-                                                text:
-                                                    //'Patient name here', //fetch patient name
-                                                    ("${patient.patient}"),
+                                                text: ("${patient.patient}"),
                                                 style: TextStyle(
                                                     fontFamily: 'Louis',
                                                     color: Colors.white,
@@ -230,9 +246,7 @@ class ReceiptPage extends StatelessWidget {
                                               fontWeight: FontWeight.w600),
                                           children: <TextSpan>[
                                             TextSpan(
-                                                text:
-                                                   // '123456789v', //fetch patient name
-                                                   ("${patient.idno}"),
+                                                text: ("${patient.idno}"),
                                                 style: TextStyle(
                                                     fontFamily: 'Louis',
                                                     color: Colors.white,
@@ -254,9 +268,7 @@ class ReceiptPage extends StatelessWidget {
                                               fontWeight: FontWeight.w600),
                                           children: <TextSpan>[
                                             TextSpan(
-                                                text:
-                                                   // '45 yrs', //fetch patient name
-                                                   ("${patient.age}"),
+                                                text: ("${patient.age}"),
                                                 style: TextStyle(
                                                     fontFamily: 'Louis',
                                                     color: Colors.white,
@@ -278,9 +290,7 @@ class ReceiptPage extends StatelessWidget {
                                               fontWeight: FontWeight.w600),
                                           children: <TextSpan>[
                                             TextSpan(
-                                                text:
-                                                    //'No. 77, ward no99, Patient street, Hospital', //fetch patient name
-                                          (" ${patient.address}"),
+                                                text: (" ${patient.address}"),
                                                 style: TextStyle(
                                                     fontFamily: 'Louis',
                                                     color: Colors.white,
@@ -302,9 +312,7 @@ class ReceiptPage extends StatelessWidget {
                                               fontWeight: FontWeight.w600),
                                           children: <TextSpan>[
                                             TextSpan(
-                                                text:
-                                                   // '0771236547', //fetch patient name
-                                                    ("${patient.mobile}"),
+                                                text: ("${patient.mobile}"),
                                                 style: TextStyle(
                                                     fontFamily: 'Louis',
                                                     color: Colors.white,
@@ -337,14 +345,73 @@ class ReceiptPage extends StatelessWidget {
                                           ]),
                                     ),
                                   ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 50),
+                                    child: Container(
+                                      child: Center(
+                                          child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: RaisedButton(
+                                          onPressed: () async {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        SelectionPage()));
+                                          },
+                                          color: Colors.teal,
+                                          shape: new RoundedRectangleBorder(
+                                            borderRadius:
+                                                new BorderRadius.circular(5.0),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(8),
+                                            child: Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.18,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  // Expanded(
+                                                  Text(
+                                                    'Done',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Louis',
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  // ),
+                                                  Icon(
+                                                    Icons.navigate_next,
+                                                    color: Colors.white,
+                                                    //size: 22,
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )),
+                                    ),
+                                  )
                                 ]))
                       ],
                       // ),
                     ),
                   ),
-                )))
+                ))),
       ]),
       // ),
     );
   }
+
+  DateFormat(String s) {}
 }

@@ -1,8 +1,10 @@
 import 'package:doc/models/area.dart';
 import 'package:doc/providers/doctorarealist.dart';
+import 'package:doc/providers/timeSlot.dart';
 import 'package:doc/screens/timeslots.dart';
 import 'package:flutter/material.dart';
 import 'package:doc/providers/doctorinfo.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class SelectionPage extends StatefulWidget {
@@ -73,6 +75,10 @@ class _SelectionPageState extends State<SelectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final InfolistProvider infolistProvider =
+        Provider.of<InfolistProvider>(context, listen: true);
+    final TimeSlotProvider timeSlotsProvider =
+        Provider.of<TimeSlotProvider>(context, listen: true);
     return Scaffold(
       backgroundColor: Colors.teal[900],
       body: Center(
@@ -342,21 +348,29 @@ class _SelectionPageState extends State<SelectionPage> {
                                   final InfolistProvider infolistProvider =
                                       Provider.of<InfolistProvider>(context,
                                           listen: false);
-                                  print('$_selectedArea');
+
+                                  // print('${_selectedArea.aName}');
                                   final Map<String, dynamic> _infoData = {
-                                    'docArea': '$_selectedArea',
-                                    'docSuburb': '$_selectedSub',
-                                    'docName': '$_selectedDoc',
+                                    'docArea': '${_selectedArea.aName}',
+                                    'docSuburb': '${_selectedSub.sName}',
+                                    'docName': '${_selectedDoc.name}',
                                   };
                                   final Map<String, dynamic> successInfo =
                                       await infolistProvider.getInfo(_infoData);
 
                                   if (successInfo['success']) {
-                                    print(successInfo['doctor']);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Timeslots()));
+                                    // print(successInfo['doctor']);
+                                     //timeSlotsProvider.getTimeSlots("");
+                                   timeSlotsProvider.getTimeSlots();
+                                    if (_selectedArea.aName != 'null' &&
+                                        _selectedSub.sName != 'null' &&
+                                        _selectedDoc.name != 'null') {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Timeslots()));
+                                    }
                                   } else {
                                     print("something went wrong");
                                   }
@@ -369,25 +383,29 @@ class _SelectionPageState extends State<SelectionPage> {
                                   padding: EdgeInsets.all(8),
                                   child: Container(
                                     width: 60,
-                                    child: Row(
-                                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                          'Next',
-                                          style: TextStyle(
-                                            fontFamily: 'Louis',
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
+                                    child: timeSlotsProvider.isLoading && infolistProvider.isLoading
+                                        ? Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : Row(
+                                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Text(
+                                                'Next',
+                                                style: TextStyle(
+                                                  fontFamily: 'Louis',
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              Icon(
+                                                Icons.navigate_next,
+                                                color: Colors.white,
+                                                size: 22,
+                                              )
+                                            ],
                                           ),
-                                        ),
-                                        Icon(
-                                          Icons.navigate_next,
-                                          color: Colors.white,
-                                          size: 22,
-                                        )
-                                      ],
-                                    ),
                                   ),
                                 ),
                               ),

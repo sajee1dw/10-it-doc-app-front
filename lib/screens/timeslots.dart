@@ -1,4 +1,4 @@
-import 'package:doc/models/info.dart';
+import 'package:intl/intl.dart';
 import 'package:doc/models/timeSlot.dart';
 import 'package:doc/providers/doctorinfo.dart';
 import 'package:doc/providers/timeSlot.dart';
@@ -14,8 +14,9 @@ class Timeslots extends StatefulWidget {
 }
 
 class _TimeslotsState extends State<Timeslots> {
-  String _date = "Not set";
-
+  DateTime selectedDate = DateTime.now();
+  //String _date = "Not set";
+  //List _filteredTimeSlots = [];
   //Arealist status;
 
   @override
@@ -24,7 +25,14 @@ class _TimeslotsState extends State<Timeslots> {
         Provider.of<InfolistProvider>(context, listen: true);
     final TimeSlotProvider timeSlotsProvider =
         Provider.of<TimeSlotProvider>(context, listen: true);
-    timeSlotsProvider.getTimeSlots();
+   //  timeSlotsProvider.getTimeSlots(String );
+    // timeSlotsProvider.timeSlots.forEach((slot) {
+    //   print("slot date = ${slot.date} , _date = $_date");
+    //   if (slot.date == _date) {
+    //     _filteredTimeSlots.add(slot);
+    //   }
+    // });
+    // print(_filteredTimeSlots);
     return Scaffold(
       appBar: AppBar(
           title: Center(
@@ -63,7 +71,9 @@ class _TimeslotsState extends State<Timeslots> {
                       child: Text(
                         //'Dr. Nobody Noman (MBBS)', //Set Doctor Name
                         infolistProvider.currentInfo != null
-                            ? infolistProvider.currentInfo.docName
+                            ? 'Dr : ' +
+                                infolistProvider.currentInfo.docName
+                                    .toUpperCase()
                             : "",
                         style: TextStyle(
                           fontFamily: 'Louis',
@@ -146,9 +156,16 @@ class _TimeslotsState extends State<Timeslots> {
                             showTitleActions: true,
                             minTime: DateTime(2020, 1, 1),
                             maxTime: DateTime(2030, 12, 31), onConfirm: (date) {
-                          print('confirm $date');
-                          _date = '${date.year} - ${date.month} - ${date.day}';
-                          setState(() {});
+                          print('confirm :  $date');
+                          final DateFormat formatter = DateFormat('yyyy-MM-dd');
+                          final String formatted = formatter.format(date);
+                          // timeSlotsProvider.getTimeSlots({'date': date.toString()});
+                          timeSlotsProvider.getTimeSlots({'date': formatted});
+
+                          if (date != null && date != selectedDate)
+                            setState(() {
+                              selectedDate = date;
+                            });
                         },
                             currentTime: DateTime.now(),
                             locale: LocaleType
@@ -175,7 +192,8 @@ class _TimeslotsState extends State<Timeslots> {
                                         ),
                                       ),
                                       Text(
-                                        "$_date",
+                                        "${selectedDate.toLocal()}"
+                                            .split(' ')[0],
                                         style: TextStyle(
                                             fontFamily: 'Louis',
                                             color: Colors.teal,
@@ -226,14 +244,16 @@ class _TimeslotsState extends State<Timeslots> {
                 scrollDirection: Axis.vertical,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 // itemBuilder: (BuildContext context, int index) {
-                children: List.generate(10, (index) {
+                children:
+                    List.generate(timeSlotsProvider.timeSlots.length, (index) {
                   TimeSlot currentTimeSlot =
                       timeSlotsProvider.timeSlots.length != 0
                           ? timeSlotsProvider.timeSlots[index]
                           : [];
-                  print(timeSlotsProvider.timeSlots.length);
+                  // print(timeSlotsProvider.timeSlots.length);
+                  // print(currentTimeSlot);
                   return Container(
-                    //height: 25,//MediaQuery.of(context).size.height*0.5,
+                    height: MediaQuery.of(context).size.height * 0.5,
                     color: Colors.transparent,
                     child: new Column(
                       //crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -243,7 +263,7 @@ class _TimeslotsState extends State<Timeslots> {
                         Row(
                           children: [
                             Expanded(
-                              // flex: 5,
+                              flex: 5,
                               child: Container(
                                 height: 60.0,
                                 child: Padding(
@@ -256,7 +276,8 @@ class _TimeslotsState extends State<Timeslots> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    PatientForm())); // patient_form.dart
+                                                    PatientForm(
+                                                        currentTimeSlot)));
                                       }
                                     },
                                     color: Colors.teal,
@@ -274,12 +295,17 @@ class _TimeslotsState extends State<Timeslots> {
                                                     MainAxisAlignment.center,
                                                 children: <Widget>[
                                               Text(
+                                                // if (currentTimeSlot.date == c)
+
                                                 "${currentTimeSlot.startTime} - ${currentTimeSlot.endTime}",
                                                 style: TextStyle(
                                                   fontFamily: 'Louis',
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.w600,
-                                                  color: Colors.white,
+                                                  color:
+                                                      currentTimeSlot.slot == 1
+                                                          ? Colors.teal[700]
+                                                          : Colors.white,
                                                 ),
                                               ),
                                               Text(
@@ -290,7 +316,10 @@ class _TimeslotsState extends State<Timeslots> {
                                                   fontFamily: 'Louis',
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w600,
-                                                  color: Colors.teal[200],
+                                                  color:
+                                                      currentTimeSlot.slot == 1
+                                                          ? Colors.red[200]
+                                                          : Colors.teal[200],
                                                 ),
                                               ),
                                             ])),

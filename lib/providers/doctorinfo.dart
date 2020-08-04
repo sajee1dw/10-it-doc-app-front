@@ -18,6 +18,7 @@ import 'dart:async';
 //   }
 // }
 class InfolistProvider with ChangeNotifier {
+  bool isLoading = false;
   Info _currentInfo;
   Info get currentInfo => _currentInfo;
 
@@ -28,7 +29,7 @@ class InfolistProvider with ChangeNotifier {
         'http://10.0.2.2:5000/book-my-doctor-eadd7/us-central1/GetInfo',
         body: json.encode(data),
         headers: {'content-type': 'application/json'});
-    print(data);
+    print(json.encode(data));
     // final Map<String, dynamic> responseData = json.decode(response.body);
     if (response.statusCode == 200) {
       final Map<String, dynamic> map = json.decode(response.body);
@@ -37,6 +38,7 @@ class InfolistProvider with ChangeNotifier {
       print(_currentInfo.docName);
       return {'success': true, 'doctor': _currentInfo};
     } else {
+      isLoading = false;
       return {'success': false, 'error': "something went wrong"};
     }
   }
