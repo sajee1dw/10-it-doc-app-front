@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: SelectionPage(),
           theme: ThemeData(
-            // focusColor: Colors.red,
             appBarTheme: AppBarTheme(color: Colors.teal),
           ),
         ));

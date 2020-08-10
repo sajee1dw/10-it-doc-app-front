@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../providers/patient.dart';
 import 'package:doc/screens/receipt.dart';
 import 'package:flutter/material.dart';
-// import 'package:navigate/pages/third.dart';
 
 class PatientForm extends StatefulWidget {
   final TimeSlot timeSlot;
@@ -70,7 +69,6 @@ class _PatientFormState extends State<PatientForm> {
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0),
                       child: Text(
-                        //'Dr. Nobody Noman (MBBS)', //Set Doctor Name
                         infolistProvider.currentInfo != null
                             ? 'Dr : ' +
                                 infolistProvider.currentInfo.docName
@@ -88,7 +86,6 @@ class _PatientFormState extends State<PatientForm> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(17.0, 5.0, 0, 0),
                       child: Text(
-                        //'No.20, Nowhere, Noland', //Set Doctor Address
                         infolistProvider.currentInfo != null
                             ? infolistProvider.currentInfo.docAddress
                             : "",
@@ -512,8 +509,6 @@ class _PatientFormState extends State<PatientForm> {
   }
 
   String validateIDnumber(String value) {
-    //String patttern = r'(^[0-9]*$)';
-    //RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
       return "ID number is Required";
     } else if (value.length != 11) {
@@ -523,8 +518,6 @@ class _PatientFormState extends State<PatientForm> {
   }
 
   String validateAge(String value) {
-    // String patttern = r'(^[0-9]*$)';
-    // RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
       return "Age is Required";
     } else if (value.length <= 1) {
@@ -547,8 +540,6 @@ class _PatientFormState extends State<PatientForm> {
   }
 
   String validateAddress(String value) {
-    //String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    //RegExp regExp = new RegExp(pattern);
     if (value.length == 0) {
       return "Address is Required";
     } else {

@@ -4,14 +4,10 @@ import 'package:doc/providers/timeSlot.dart';
 import 'package:doc/screens/timeslots.dart';
 import 'package:flutter/material.dart';
 import 'package:doc/providers/doctorinfo.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class SelectionPage extends StatefulWidget {
-  // SectionPage({Key key, this.title}) : super(key: key);
   SelectionPage({Key key}) : super(key: key);
-
-  // final String title;
 
   @override
   _SelectionPageState createState() => _SelectionPageState();
@@ -175,7 +171,6 @@ class _SelectionPageState extends State<SelectionPage> {
                                             borderRadius:
                                                 BorderRadius.circular(5)),
                                         child: DropdownButton<Area>(
-                                          // value: dropdownValue,
                                           isExpanded: true,
                                           icon: Icon(Icons.expand_more),
                                           iconEnabledColor: Colors.teal[100],
@@ -191,7 +186,6 @@ class _SelectionPageState extends State<SelectionPage> {
                                           disabledHint:
                                               Text('No Districts Available'),
                                           value: _selectedArea,
-
                                           items: areas
                                               .map((e) =>
                                                   DropdownMenuItem<Area>(
@@ -239,17 +233,11 @@ class _SelectionPageState extends State<SelectionPage> {
                                             borderRadius:
                                                 BorderRadius.circular(5)),
                                         child: DropdownButton<Sub>(
-                                          // value: dropdownValue,
                                           isExpanded: true,
                                           icon: Icon(Icons.expand_more),
                                           iconEnabledColor: Colors.teal[100],
                                           iconSize: 20,
                                           underline: SizedBox(),
-                                          // onChanged: (String newValue) {
-                                          //   setState(() {
-                                          //     // dropdownValue = newValue;
-                                          //   });
-                                          // },
                                           hint: Text('Select Area',
                                               style: TextStyle(
                                                 fontFamily: 'Louis',
@@ -305,17 +293,11 @@ class _SelectionPageState extends State<SelectionPage> {
                                             borderRadius:
                                                 BorderRadius.circular(5)),
                                         child: DropdownButton<Doctor>(
-                                          // value: dropdownValue,
                                           isExpanded: true,
                                           icon: Icon(Icons.expand_more),
                                           iconEnabledColor: Colors.teal[100],
                                           iconSize: 20,
                                           underline: SizedBox(),
-                                          // onChanged: (String newValue) {
-                                          //   setState(() {
-                                          //     // dropdownValue = newValue;
-                                          //   });
-                                          // },
                                           hint: Text('Select Doctor',
                                               style: TextStyle(
                                                 fontFamily: 'Louis',
@@ -349,7 +331,6 @@ class _SelectionPageState extends State<SelectionPage> {
                                       Provider.of<InfolistProvider>(context,
                                           listen: false);
 
-                                  // print('${_selectedArea.aName}');
                                   final Map<String, dynamic> _infoData = {
                                     'docArea': '${_selectedArea.aName}',
                                     'docSuburb': '${_selectedSub.sName}',
@@ -359,9 +340,8 @@ class _SelectionPageState extends State<SelectionPage> {
                                       await infolistProvider.getInfo(_infoData);
 
                                   if (successInfo['success']) {
-                                    // print(successInfo['doctor']);
-                                     //timeSlotsProvider.getTimeSlots("");
-                                   timeSlotsProvider.getTimeSlots();
+                                    ;
+                                    timeSlotsProvider.getTimeSlots();
                                     if (_selectedArea.aName != 'null' &&
                                         _selectedSub.sName != 'null' &&
                                         _selectedDoc.name != 'null') {
@@ -383,7 +363,8 @@ class _SelectionPageState extends State<SelectionPage> {
                                   padding: EdgeInsets.all(8),
                                   child: Container(
                                     width: 60,
-                                    child: timeSlotsProvider.isLoading && infolistProvider.isLoading
+                                    child: timeSlotsProvider.isLoading &&
+                                            infolistProvider.isLoading
                                         ? Center(
                                             child: CircularProgressIndicator(),
                                           )

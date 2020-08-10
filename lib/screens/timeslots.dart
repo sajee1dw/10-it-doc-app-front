@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:doc/screens/patient_form.dart';
 import 'package:provider/provider.dart';
-// import 'package:navigate/pages/third.dart';
 
 class Timeslots extends StatefulWidget {
   @override
@@ -15,9 +14,6 @@ class Timeslots extends StatefulWidget {
 
 class _TimeslotsState extends State<Timeslots> {
   DateTime selectedDate = DateTime.now();
-  //String _date = "Not set";
-  //List _filteredTimeSlots = [];
-  //Arealist status;
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +21,6 @@ class _TimeslotsState extends State<Timeslots> {
         Provider.of<InfolistProvider>(context, listen: true);
     final TimeSlotProvider timeSlotsProvider =
         Provider.of<TimeSlotProvider>(context, listen: true);
-   //  timeSlotsProvider.getTimeSlots(String );
-    // timeSlotsProvider.timeSlots.forEach((slot) {
-    //   print("slot date = ${slot.date} , _date = $_date");
-    //   if (slot.date == _date) {
-    //     _filteredTimeSlots.add(slot);
-    //   }
-    // });
-    // print(_filteredTimeSlots);
     return Scaffold(
       appBar: AppBar(
           title: Center(
@@ -69,7 +57,6 @@ class _TimeslotsState extends State<Timeslots> {
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0),
                       child: Text(
-                        //'Dr. Nobody Noman (MBBS)', //Set Doctor Name
                         infolistProvider.currentInfo != null
                             ? 'Dr : ' +
                                 infolistProvider.currentInfo.docName
@@ -87,7 +74,6 @@ class _TimeslotsState extends State<Timeslots> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(17.0, 5.0, 0, 0),
                       child: Text(
-                        //'No.20, Nowhere, Noland', //Set Doctor Address
                         infolistProvider.currentInfo != null
                             ? infolistProvider.currentInfo.docAddress
                             : "",
@@ -159,7 +145,6 @@ class _TimeslotsState extends State<Timeslots> {
                           print('confirm :  $date');
                           final DateFormat formatter = DateFormat('yyyy-MM-dd');
                           final String formatted = formatter.format(date);
-                          // timeSlotsProvider.getTimeSlots({'date': date.toString()});
                           timeSlotsProvider.getTimeSlots({'date': formatted});
 
                           if (date != null && date != selectedDate)
@@ -250,8 +235,6 @@ class _TimeslotsState extends State<Timeslots> {
                       timeSlotsProvider.timeSlots.length != 0
                           ? timeSlotsProvider.timeSlots[index]
                           : [];
-                  // print(timeSlotsProvider.timeSlots.length);
-                  // print(currentTimeSlot);
                   return Container(
                     height: MediaQuery.of(context).size.height * 0.5,
                     color: Colors.transparent,
@@ -295,8 +278,6 @@ class _TimeslotsState extends State<Timeslots> {
                                                     MainAxisAlignment.center,
                                                 children: <Widget>[
                                               Text(
-                                                // if (currentTimeSlot.date == c)
-
                                                 "${currentTimeSlot.startTime} - ${currentTimeSlot.endTime}",
                                                 style: TextStyle(
                                                   fontFamily: 'Louis',
@@ -329,54 +310,6 @@ class _TimeslotsState extends State<Timeslots> {
                                 ),
                               ),
                             ),
-                            // Expanded(
-                            //   // flex: 5,
-                            //   child: Container(
-                            //     height: 60.0,
-                            //     child: Padding(
-                            //       padding: const EdgeInsets.symmetric(
-                            //           horizontal: 2.0),
-                            //       child: RaisedButton(
-                            //         onPressed: () {},
-                            //         color: Colors.teal,
-                            //         shape: new RoundedRectangleBorder(
-                            //           borderRadius:
-                            //               new BorderRadius.circular(5.0),
-                            //         ),
-                            //         child: Padding(
-                            //           padding: EdgeInsets.all(0),
-                            //           child: Container(
-                            //             width: 180,
-                            //             child: Center(
-                            //                 child: Column(
-                            //                     mainAxisAlignment:
-                            //                         MainAxisAlignment.center,
-                            //                     children: <Widget>[
-                            //                   Text(
-                            //                     '10:15am - 10:30am',
-                            //                     style: TextStyle(
-                            //                       fontFamily: 'Louis',
-                            //                       fontSize: 18,
-                            //                       fontWeight: FontWeight.w600,
-                            //                       color: Colors.teal[800],
-                            //                     ),
-                            //                   ),
-                            //                   Text(
-                            //                     'Not Available',
-                            //                     style: TextStyle(
-                            //                       fontFamily: 'Louis',
-                            //                       fontSize: 12,
-                            //                       fontWeight: FontWeight.w600,
-                            //                       color: Colors.red[200],
-                            //                     ),
-                            //                   ),
-                            //                 ])),
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       ],

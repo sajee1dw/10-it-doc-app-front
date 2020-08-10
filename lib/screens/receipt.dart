@@ -14,12 +14,7 @@ class ReceiptPage extends StatelessWidget {
         Provider.of<InfolistProvider>(context, listen: true);
     var startDateTime = ("${patient.startTime}");
     print(startDateTime);
-    
 
-   // var x = DateFormat('y-M-d').format(startDateTime);
-    //var y = DateFormat('H').format(startDateTime);
-   // print(x);
-   // print(y);
     return Scaffold(
       appBar: AppBar(
           title: Center(
@@ -91,7 +86,6 @@ class ReceiptPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          //'2020 - 12 - 12', //set date
                           startDateTime.split(" ")[0],
                           style: TextStyle(
                             fontFamily: 'Sansation',
@@ -124,7 +118,6 @@ class ReceiptPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          // '8:15am', //set time
                           (startDateTime.split(" ")[1]).split(".")[0],
                           style: TextStyle(
                             fontFamily: 'Sansation',
@@ -160,8 +153,6 @@ class ReceiptPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                            // 'Dr. Nobody Noman (MBBS)',
-
                             infolistProvider.currentInfo != null
                                 ? 'Dr : ' +
                                     infolistProvider.currentInfo.docName
@@ -175,7 +166,6 @@ class ReceiptPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 7.0),
                           child: Text(
-                              //'No.20, Nowhere, Noland',
                               infolistProvider.currentInfo != null
                                   ? infolistProvider.currentInfo.docAddress
                                   : "",

@@ -11,7 +11,7 @@ class Patient {
 
   Patient(
       {this.eventName,
-        this.startTime,
+      this.startTime,
       this.endTime,
       this.name,
       this.patient,
