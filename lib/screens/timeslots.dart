@@ -1,3 +1,4 @@
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:doc/models/timeSlot.dart';
 import 'package:doc/providers/doctorinfo.dart';
@@ -12,15 +13,18 @@ class Timeslots extends StatefulWidget {
   _TimeslotsState createState() => _TimeslotsState();
 }
 
+DateFormat formated = new DateFormat("HH:mm");
+
 class _TimeslotsState extends State<Timeslots> {
   DateTime selectedDate = DateTime.now();
-
+  final now = DateTime.now();
   @override
   Widget build(BuildContext context) {
     final InfolistProvider infolistProvider =
         Provider.of<InfolistProvider>(context, listen: true);
     final TimeSlotProvider timeSlotsProvider =
         Provider.of<TimeSlotProvider>(context, listen: true);
+
     return Scaffold(
       appBar: AppBar(
           title: Center(
@@ -140,12 +144,26 @@ class _TimeslotsState extends State<Timeslots> {
                               containerHeight: 210.0,
                             ),
                             showTitleActions: true,
-                            minTime: DateTime(2020, 1, 1),
-                            maxTime: DateTime(2030, 12, 31), onConfirm: (date) {
+                            minTime: DateTime(now.year, now.month, now.day),
+                            maxTime: DateTime(now.year, now.month, now.day + 1),
+                            onConfirm: (date) {
                           print('confirm :  $date');
+                          print(formated.format(
+                              DateTime.parse('2018-09-07T04:30+00:00')
+                                  .toLocal()));
+                          print(formated.format(DateTime.parse(
+                                  '2020-08-12' + 'T' + '04:30' + '+00:00')
+                              .toLocal()));
+
                           final DateFormat formatter = DateFormat('yyyy-MM-dd');
                           final String formatted = formatter.format(date);
-                          timeSlotsProvider.getTimeSlots({'date': formatted});
+                          timeSlotsProvider.getTimeSlots({
+                            'date': formatted,
+                            'appointmentcalendar': infolistProvider
+                                .currentInfo.appointmentcalendar,
+                            'bookingcalendar':
+                                infolistProvider.currentInfo.bookingcalendar
+                          });
 
                           if (date != null && date != selectedDate)
                             setState(() {
@@ -220,105 +238,119 @@ class _TimeslotsState extends State<Timeslots> {
                   ],
                 ),
               ),
-              child: GridView.count(
-                childAspectRatio: 2,
-                //gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                // itemCount: state.bestContributeCountry.length,
-                scrollDirection: Axis.vertical,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                // itemBuilder: (BuildContext context, int index) {
-                children:
-                    List.generate(timeSlotsProvider.timeSlots.length, (index) {
-                  TimeSlot currentTimeSlot =
-                      timeSlotsProvider.timeSlots.length != 0
-                          ? timeSlotsProvider.timeSlots[index]
-                          : [];
-                  return Container(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    color: Colors.transparent,
-                    child: new Column(
-                      //crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      // shrinkWrap: true,
-                      children: <Widget>[
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 5,
-                              child: Container(
-                                height: 60.0,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 5.0),
-                                  child: RaisedButton(
-                                    onPressed: () {
-                                      if (currentTimeSlot.slot != 1) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PatientForm(
-                                                        currentTimeSlot)));
-                                      }
-                                    },
-                                    color: Colors.teal,
-                                    shape: new RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(5.0),
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(0),
-                                      child: Container(
-                                        width: 180,
-                                        child: Center(
-                                            child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: <Widget>[
-                                              Text(
-                                                "${currentTimeSlot.startTime} - ${currentTimeSlot.endTime}",
-                                                style: TextStyle(
-                                                  fontFamily: 'Louis',
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w600,
-                                                  color:
+              child: timeSlotsProvider.isLoading
+                  ? Center(
+                      child: SpinKitFadingCircle(
+                        color: Colors.white,
+                      ),
+                    )
+                  : GridView.count(
+                      childAspectRatio: 2,
+                      //gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                      shrinkWrap: true,
+                      crossAxisCount: 2,
+                      // itemCount: state.bestContributeCountry.length,
+                      scrollDirection: Axis.vertical,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      // itemBuilder: (BuildContext context, int index) {
+                      children: List.generate(
+                          timeSlotsProvider.timeSlots.length, (index) {
+                        TimeSlot currentTimeSlot =
+                            timeSlotsProvider.timeSlots.length != 0
+                                ? timeSlotsProvider.timeSlots[index]
+                                : [];
+
+                        // var x = currentTimeSlot.date +'T'+ currentTimeSlot.startTime +'00:00'  ;
+                        return Container(
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          color: Colors.transparent,
+                          child: new Column(
+                            //crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            // shrinkWrap: true,
+                            children: <Widget>[
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                      height: 60.0,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 5.0),
+                                        child: RaisedButton(
+                                          onPressed: () {
+                                            if (currentTimeSlot.slot != 1) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PatientForm(
+                                                              currentTimeSlot)));
+                                            }
+                                          },
+                                          color: Colors.teal,
+                                          shape: new RoundedRectangleBorder(
+                                            borderRadius:
+                                                new BorderRadius.circular(5.0),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.all(0),
+                                            child: Container(
+                                              width: 180,
+                                              child: Center(
+                                                  child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                    Text(
+                                                      "${formated.format(DateTime.parse(currentTimeSlot.date + 'T' + currentTimeSlot.startTime + '+00:00').toLocal())} - ${formated.format(DateTime.parse(currentTimeSlot.date + 'T' + currentTimeSlot.endTime + '+00:00').toLocal())}",
+                                                      //"${currentTimeSlot.startTime} - ${currentTimeSlot.endTime}",
+                                                      style: TextStyle(
+                                                        fontFamily: 'Louis',
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: currentTimeSlot
+                                                                    .slot ==
+                                                                1
+                                                            ? Colors.teal[700]
+                                                            : Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
                                                       currentTimeSlot.slot == 1
-                                                          ? Colors.teal[700]
-                                                          : Colors.white,
-                                                ),
-                                              ),
-                                              Text(
-                                                currentTimeSlot.slot == 1
-                                                    ? "Not Awailable"
-                                                    : "Awailable",
-                                                style: TextStyle(
-                                                  fontFamily: 'Louis',
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                  color:
-                                                      currentTimeSlot.slot == 1
-                                                          ? Colors.red[200]
-                                                          : Colors.teal[200],
-                                                ),
-                                              ),
-                                            ])),
+                                                          ? "Not Awailable"
+                                                          : "Awailable",
+                                                      style: TextStyle(
+                                                        fontFamily: 'Louis',
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: currentTimeSlot
+                                                                    .slot ==
+                                                                1
+                                                            ? Colors.red[200]
+                                                            : Colors.teal[200],
+                                                      ),
+                                                    ),
+                                                  ])),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }),
+                            ],
+                          ),
+                        );
+                      }),
 
-                // }
-              ),
+                      // }
+                    ),
             ),
           ),
         ],
@@ -326,3 +358,5 @@ class _TimeslotsState extends State<Timeslots> {
     );
   }
 }
+
+// "${currentTimeSlot.startTime} - ${currentTimeSlot.endTime}",

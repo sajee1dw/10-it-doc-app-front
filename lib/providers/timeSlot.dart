@@ -9,7 +9,8 @@ class TimeSlotProvider with ChangeNotifier {
   bool isLoading = false;
   List<dynamic> timeSlots = [];
 
-  Future<Map<String, dynamic>> getTimeSlots([date = 0]) async {
+  Future<Map<String, dynamic>> getTimeSlots(
+      [date = 0, bookingcalendar, appointmentcalendar]) async {
     try {
       if (date == 0) {
         date = {'date': ""};
@@ -38,4 +39,5 @@ class TimeSlotProvider with ChangeNotifier {
       throw Exception(e.toString());
     }
   }
+ 
 }

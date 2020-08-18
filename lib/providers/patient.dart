@@ -7,21 +7,24 @@ import 'dart:async';
 
 class PatientProvider with ChangeNotifier {
   bool isLoading = false;
-  Patient currentPatient;
-  Future<Map<String, dynamic>> createPatient(data) async {
+  Patient _currentPatient;
+  Patient get currentPatient => _currentPatient;
+  Future<Map<String, dynamic>> getPatient(data) async {
     try {
-      isLoading = true;
-      notifyListeners();
+      // isLoading = true;
+      //notifyListeners();
       final http.Response response = await HttpService.createPatient(data);
       print(response.body);
       if (response.statusCode == 200) {
-        currentPatient = Patient.fromJson(data);
-        isLoading = false;
-        notifyListeners();
-        return {'success': true, 'patient': currentPatient};
+        final Map<String, dynamic> map = json.decode(response.body);
+        _currentPatient = Patient.fromJson(map);
+        //print(map);
+        //isLoading = false;
+        //notifyListeners();
+        return {'success': true, 'patient': _currentPatient};
       } else {
         isLoading = false;
-        notifyListeners();
+        //notifyListeners();
         return {'success': false, 'error': "something went wrong"};
       }
     } catch (e) {

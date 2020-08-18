@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/patient.dart';
 import 'package:doc/screens/receipt.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PatientForm extends StatefulWidget {
   final TimeSlot timeSlot;
@@ -12,6 +13,8 @@ class PatientForm extends StatefulWidget {
   @override
   _PatientFormState createState() => _PatientFormState();
 }
+
+DateFormat formated = new DateFormat("HH:mm");
 
 class _PatientFormState extends State<PatientForm> {
   Map<String, dynamic> _formData = <String, dynamic>{};
@@ -171,7 +174,8 @@ class _PatientFormState extends State<PatientForm> {
                             ),
                           ),
                           Text(
-                            '${widget.timeSlot.startTime}', //set time
+                            '${formated.format(DateTime.parse(widget.timeSlot.date + 'T' + widget.timeSlot.startTime + '+00:00').toLocal())}',
+                            //'${widget.timeSlot.startTime}', //set time
                             style: TextStyle(
                               fontFamily: 'Sansation',
                               color: Colors.teal[100],
@@ -233,6 +237,8 @@ class _PatientFormState extends State<PatientForm> {
   }
 
   Widget formPatient() {
+    final InfolistProvider infolistProvider =
+        Provider.of<InfolistProvider>(context, listen: true);
     // FocusNode myFocusNode = new FocusNode();
     return new Column(
       children: <Widget>[
@@ -422,35 +428,40 @@ class _PatientFormState extends State<PatientForm> {
           child: RaisedButton(
             onPressed: () async {
               if (_validateInputs()) {
-                final PatientProvider patient =
+                final PatientProvider patientProvider =
                     Provider.of<PatientProvider>(context, listen: false);
                 // _formKey.currentState.validate();
                 final Map<String, dynamic> _formData = {
-                  'eventName':
-                      nameController.text + ': Has Booked This Time Slot',
+                  'eventName': nameController.text,
+
                   'startTime':
-                      '${widget.timeSlot.date}T${widget.timeSlot.startTime}:00',
+                      '${widget.timeSlot.date}T${formated.format(DateTime.parse(widget.timeSlot.date + 'T' + widget.timeSlot.startTime + '+00:00').toLocal())}:00', //10.00==>04.30==>10.00
+                  //'${widget.timeSlot.date}T${widget.timeSlot.startTime}:00',//04.30==>10.00==>04.30
                   'endTime':
-                      '${widget.timeSlot.date}T${widget.timeSlot.endTime}:00',
+                      '${widget.timeSlot.date}T${formated.format(DateTime.parse(widget.timeSlot.date + 'T' + widget.timeSlot.endTime + '+00:00').toLocal())}:00',
+                  //'${widget.timeSlot.date}T${widget.timeSlot.endTime}:00',
                   'name': nameController.text,
                   'patientName': patientController.text,
                   'idno': idController.text,
                   'age': ageController.text,
                   'address': addressController.text,
                   'mobile': mobileController.text,
+                  'bookingcalendar':
+                      infolistProvider.currentInfo.bookingcalendar,
                 };
 
                 final Map<String, dynamic> successInfo =
-                    await patient.createPatient(_formData);
+                    await patientProvider.getPatient(_formData);
                 print(_formData);
 
                 if (successInfo['success']) {
-                  print(patient.currentPatient.startTime);
+                  print(patientProvider.currentPatient.startTime);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              ReceiptPage(patient: patient.currentPatient)));
+                          builder: (context) => ReceiptPage(
+                              //patient: patient.currentPatient
+                              )));
                 } else {
                   print("something went wrong");
                 }
@@ -520,8 +531,6 @@ class _PatientFormState extends State<PatientForm> {
   String validateAge(String value) {
     if (value.length == 0) {
       return "Age is Required";
-    } else if (value.length <= 1) {
-      return "Age must 2 digits";
     }
     return null;
   }

@@ -1,16 +1,19 @@
 class Patient {
   String eventName;
-  DateTime startTime;
-  DateTime endTime;
+  String date;
+  String startTime;
+  String endTime;
   String name;
   String patient;
   String idno;
-  int age;
+  String age;
   String address;
   String mobile;
+  String bValue;
 
   Patient(
       {this.eventName,
+      this.date,
       this.startTime,
       this.endTime,
       this.name,
@@ -18,17 +21,20 @@ class Patient {
       this.idno,
       this.age,
       this.address,
-      this.mobile});
+      this.mobile,
+      this.bValue});
 
   factory Patient.fromJson(Map<String, dynamic> json) => Patient(
         eventName: json["eventName"],
-        startTime: DateTime.parse(json["startTime"]),
-        endTime: DateTime.parse(json["endTime"]),
+        date: json["date"],
+        startTime: json["start"],
+        endTime: json["end"],
         name: json["name"],
-        patient: json["patientName"],
+        patient: json["patient"],
         idno: json["idno"],
-        age: int.parse(json["age"]),
+        age: json["age"],
         address: json["address"],
         mobile: json["mobile"],
+        bValue: json["bValue"],
       );
 }

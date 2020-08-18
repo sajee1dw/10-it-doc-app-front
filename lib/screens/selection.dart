@@ -4,6 +4,7 @@ import 'package:doc/providers/timeSlot.dart';
 import 'package:doc/screens/timeslots.dart';
 import 'package:flutter/material.dart';
 import 'package:doc/providers/doctorinfo.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 class SelectionPage extends StatefulWidget {
@@ -23,8 +24,8 @@ class _SelectionPageState extends State<SelectionPage> {
   Area _selectedArea;
   Sub _selectedSub;
   Doctor _selectedDoc;
-  String _areaDisabledText = 'Select District first';
-  String _doctorDisabledText = 'Select Area first';
+  String _areaDisabledText = 'District first';
+  String _doctorDisabledText = ' Area first';
 
   void _getData() async {
     try {
@@ -41,8 +42,8 @@ class _SelectionPageState extends State<SelectionPage> {
       _selectedDoc = null;
       suburbs =
           allSuburbs.where((i) => i.aName == _selectedArea.aName).toList();
-      if (suburbs.isEmpty) _areaDisabledText = 'No Areas Available';
-      _doctorDisabledText = 'Select Area first';
+      if (suburbs.isEmpty) _areaDisabledText = 'No Areas Now';
+      _doctorDisabledText = ' Area first';
       doctors.clear();
     });
   }
@@ -53,7 +54,7 @@ class _SelectionPageState extends State<SelectionPage> {
       _selectedDoc = null;
       doctors =
           allDoctors.where((i) => i.suburb == _selectedSub.sName).toList();
-      if (doctors.isEmpty) _doctorDisabledText = 'No Doctors Available';
+      if (doctors.isEmpty) _doctorDisabledText = 'No Doctors ';
     });
   }
 
@@ -340,8 +341,12 @@ class _SelectionPageState extends State<SelectionPage> {
                                       await infolistProvider.getInfo(_infoData);
 
                                   if (successInfo['success']) {
-                                    ;
-                                    timeSlotsProvider.getTimeSlots();
+                                    timeSlotsProvider.getTimeSlots({
+                                      'appointmentcalendar': infolistProvider
+                                          .currentInfo.appointmentcalendar,
+                                      'bookingcalendar': infolistProvider
+                                          .currentInfo.bookingcalendar
+                                    });
                                     if (_selectedArea.aName != 'null' &&
                                         _selectedSub.sName != 'null' &&
                                         _selectedDoc.name != 'null') {
@@ -366,7 +371,9 @@ class _SelectionPageState extends State<SelectionPage> {
                                     child: timeSlotsProvider.isLoading &&
                                             infolistProvider.isLoading
                                         ? Center(
-                                            child: CircularProgressIndicator(),
+                                            child: SpinKitFadingCircle(
+                                              color: Colors.white,
+                                            ),
                                           )
                                         : Row(
                                             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -395,7 +402,9 @@ class _SelectionPageState extends State<SelectionPage> {
                         );
                       }
                       return Center(
-                        child: CircularProgressIndicator(),
+                        child: SpinKitFadingCircle(
+                          color: Colors.white,
+                        ),
                       );
                     })),
             Expanded(
