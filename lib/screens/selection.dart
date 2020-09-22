@@ -1,11 +1,17 @@
 import 'package:doc/models/area.dart';
 import 'package:doc/providers/doctorarealist.dart';
 import 'package:doc/providers/timeSlot.dart';
+import 'package:doc/providers/userData.dart';
 import 'package:doc/screens/timeslots.dart';
+import 'package:doc/screens/user_booked.dart';
 import 'package:flutter/material.dart';
 import 'package:doc/providers/doctorinfo.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:unique_identifier/unique_identifier.dart';
 
 class SelectionPage extends StatefulWidget {
   SelectionPage({Key key}) : super(key: key);
@@ -15,6 +21,8 @@ class SelectionPage extends StatefulWidget {
 }
 
 class _SelectionPageState extends State<SelectionPage> {
+  String cacheDocArea, cacheDocSuburb, cacheBValue;
+  String _identifier = 'Unknown';
   Future<Map<String, dynamic>> data;
   List<Area> areas = [];
   List<Sub> allSuburbs = [];
@@ -33,6 +41,21 @@ class _SelectionPageState extends State<SelectionPage> {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> initUniqueIdentifierState() async {
+    String identifier;
+    try {
+      identifier = await UniqueIdentifier.serial;
+    } on PlatformException {
+      identifier = 'Failed to get Unique Identifier';
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _identifier = identifier;
+    });
   }
 
   _onAreaSelected(Area area) {
@@ -68,6 +91,8 @@ class _SelectionPageState extends State<SelectionPage> {
   void initState() {
     super.initState();
     this._getData();
+    this.initUniqueIdentifierState();
+    this.getData();
   }
 
   @override
@@ -76,6 +101,7 @@ class _SelectionPageState extends State<SelectionPage> {
         Provider.of<InfolistProvider>(context, listen: true);
     final TimeSlotProvider timeSlotsProvider =
         Provider.of<TimeSlotProvider>(context, listen: true);
+    print(cacheDocArea);
     return Scaffold(
       backgroundColor: Colors.teal[900],
       body: Center(
@@ -90,7 +116,7 @@ class _SelectionPageState extends State<SelectionPage> {
                     Container(
                       // margin: EdgeInsets.all(100.0),
                       height: 280.0,
-
+                        
                       decoration: BoxDecoration(
                         color: Colors.teal,
                         shape: BoxShape.rectangle,
@@ -408,33 +434,106 @@ class _SelectionPageState extends State<SelectionPage> {
                       );
                     })),
             Expanded(
-                flex: 2,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 60),
-                  child: RichText(
-                    text: TextSpan(
-                      children: <TextSpan>[
-                        TextSpan(
-                            text: 'Doctor Booking App (Disclamer)\n\n',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                                fontFamily: 'Louis',
-                                color: Colors.teal[200])),
-                        TextSpan(
-                            text:
-                                'this is a doc boking app. this is a doc boking app. this is a doc boking app. this is a doc boking app. ',
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontFamily: 'Louis',
-                                color: Colors.teal[300]))
-                      ],
+              flex: 1,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 60),
+                child: RichText(
+                  text: TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                          text: 'Doctor Booking App (Disclamer)\n\n',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                              fontFamily: 'Louis',
+                              color: Colors.teal[200])),
+                      TextSpan(
+                          text:
+                              'this is a doc boking app. this is a doc boking app. this is a doc boking app. this is a doc boking app. ',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Louis',
+                              color: Colors.teal[300]))
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(250, 10, 0, 60),
+                child: RaisedButton(
+                  onPressed: () async {
+                    final UserDataProvider userDataProvider =
+                        Provider.of<UserDataProvider>(context, listen: false);
+
+                    final Map<String, dynamic> _userData = {
+                      'uniqueIdentifier': _identifier,
+                    };
+                    _addData();
+                    final Map<String, dynamic> successInfo =
+                        await userDataProvider.getUserData(_userData);
+
+                    if (successInfo['success']) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserBooking()));
+                    } else {
+                      print("something went wrong");
+                    }
+                  },
+                  color: Colors.teal,
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(9.0),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Container(
+                      width: 40,
+                      // height: 30,
+                      child: Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          // Text(
+                          //   'Next',
+                          //   style: TextStyle(
+                          //     fontFamily: 'Louis',
+                          //     fontSize: 18,
+                          //     fontWeight: FontWeight.w600,
+                          //     color: Colors.white,
+                          //   ),
+                          // ),
+                          Icon(
+                            Icons.history,
+                            color: Colors.black,
+                            size: 40,
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ))
+                ),
+              ),
+            )
           ]),
         ),
       ),
     );
+  }
+
+  _addData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('identifier', _identifier);
+    print(_identifier);
+  }
+
+  getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    cacheBValue = prefs.getString('bValue');
+    cacheDocArea = prefs.getString('docArea');
+    cacheDocSuburb = prefs.getString('docSuburb');
   }
 }

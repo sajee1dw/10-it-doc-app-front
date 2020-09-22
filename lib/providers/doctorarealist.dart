@@ -8,7 +8,7 @@ class ArealistProvider {
   static Future<Map<String, dynamic>> getAreaList() async {
     try {
       final http.Response response = await HttpService.getAreaList();
-      print(response.body);
+      print("Area List"+response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         List<Area> areas = [];
         List<Sub> suburbs = [];

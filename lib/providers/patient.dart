@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PatientProvider with ChangeNotifier {
   bool isLoading = false;
@@ -14,13 +15,13 @@ class PatientProvider with ChangeNotifier {
       // isLoading = true;
       //notifyListeners();
       final http.Response response = await HttpService.createPatient(data);
-      print(response.body);
+      print("Patient Data"+response.body);
       if (response.statusCode == 200) {
         final Map<String, dynamic> map = json.decode(response.body);
         _currentPatient = Patient.fromJson(map);
-        //print(map);
         //isLoading = false;
         //notifyListeners();
+        _addData();
         return {'success': true, 'patient': _currentPatient};
       } else {
         isLoading = false;
@@ -30,5 +31,16 @@ class PatientProvider with ChangeNotifier {
     } catch (e) {
       throw Exception(e.toString());
     }
+  }
+
+  _addData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('name', currentPatient.name);
+    prefs.setString('patientName', currentPatient.patient);
+    prefs.setString('idno', currentPatient.idno);
+    prefs.setString('age', currentPatient.age);
+    prefs.setString('address', currentPatient.address);
+    prefs.setString('mobile', currentPatient.mobile);
+    prefs.setString('bValue', currentPatient.bValue);
   }
 }

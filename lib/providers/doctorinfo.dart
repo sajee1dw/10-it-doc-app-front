@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class InfolistProvider with ChangeNotifier {
   bool isLoading = false;
   Info _currentInfo;
@@ -13,11 +15,11 @@ class InfolistProvider with ChangeNotifier {
   Future<Map<String, dynamic>> getInfo(data) async {
     try {
       final http.Response response = await HttpService.getDocInfoList(data);
-      print(json.encode(data));
+      print("Doc Info"+response.body);
       if (response.statusCode == 200) {
         final Map<String, dynamic> map = json.decode(response.body);
         _currentInfo = Info.fromJson(map);
-        print(_currentInfo.docName);
+        _addData();
         return {'success': true, 'doctor': _currentInfo};
       } else {
         isLoading = false;
@@ -26,5 +28,11 @@ class InfolistProvider with ChangeNotifier {
     } catch (e) {
       throw Exception(e.toString());
     }
+  }
+
+  _addData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('docArea', _currentInfo.docArea);
+    prefs.setString('docSuburb', _currentInfo.docSuburb);
   }
 }

@@ -4,6 +4,8 @@ class Info {
   int phone;
   String appointmentcalendar;
   String bookingcalendar;
+  String docArea;
+  String docSuburb;
 
   Info({
     this.docName,
@@ -11,6 +13,8 @@ class Info {
     this.phone,
     this.appointmentcalendar,
     this.bookingcalendar,
+    this.docArea,
+    this.docSuburb,
   });
 
   Info.fromJson(Map<String, dynamic> parsedJson) {
@@ -19,5 +23,7 @@ class Info {
     this.phone = parsedJson['phone'];
     this.appointmentcalendar = parsedJson['appointmentcalendar'];
     this.bookingcalendar = parsedJson['bookingcalendar'];
+    this.docArea = parsedJson['area'];
+    this.docSuburb = parsedJson['suburb'];
   }
 }

@@ -5,6 +5,9 @@ import '../providers/patient.dart';
 import 'package:doc/screens/receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
+import 'package:unique_identifier/unique_identifier.dart';
 
 class PatientForm extends StatefulWidget {
   final TimeSlot timeSlot;
@@ -18,6 +21,8 @@ DateFormat formated = new DateFormat("HH:mm");
 
 class _PatientFormState extends State<PatientForm> {
   Map<String, dynamic> _formData = <String, dynamic>{};
+  String _identifier = 'Unknown';
+  String _now = new DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now());
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController patientController = TextEditingController();
@@ -33,11 +38,44 @@ class _PatientFormState extends State<PatientForm> {
   String patientname;
   String age;
   String phone;
+  bool isEnabled = true;
+  String cacheName,
+      cachePatientName,
+      cacheIdNo,
+      cacheAge,
+      cacheAddress,
+      cacheMobile,
+      cacheBValue;
+
+  @override
+  void initState() {
+    setState(() {
+      getData();
+    });
+    initUniqueIdentifierState();
+    return super.initState();
+  }
+
+  Future<void> initUniqueIdentifierState() async {
+    String identifier;
+    try {
+      identifier = await UniqueIdentifier.serial;
+    } on PlatformException {
+      identifier = 'Failed to get Unique Identifier';
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _identifier = identifier;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final InfolistProvider infolistProvider =
         Provider.of<InfolistProvider>(context, listen: true);
+    print("creater Date" + _now);
     return Scaffold(
       appBar: AppBar(
           title: Center(
@@ -146,7 +184,7 @@ class _PatientFormState extends State<PatientForm> {
                             style: TextStyle(
                               fontFamily: 'Sansation',
                               color: Colors.teal[100],
-                              fontSize: 18,
+                              fontSize: 17,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -278,7 +316,7 @@ class _PatientFormState extends State<PatientForm> {
           keyboardType: TextInputType.text,
           validator: validateName,
           onSaved: (String value) {
-            _formData['Name'] = value;
+            _formData['Name'] = "value";
           },
         ),
         Align(
@@ -427,7 +465,10 @@ class _PatientFormState extends State<PatientForm> {
           padding: const EdgeInsets.all(10.0),
           child: RaisedButton(
             onPressed: () async {
-              if (_validateInputs()) {
+              if (_validateInputs() && isEnabled == true) {
+                setState(() {
+                  isEnabled = false;
+                });
                 final PatientProvider patientProvider =
                     Provider.of<PatientProvider>(context, listen: false);
                 // _formKey.currentState.validate();
@@ -446,8 +487,11 @@ class _PatientFormState extends State<PatientForm> {
                   'age': ageController.text,
                   'address': addressController.text,
                   'mobile': mobileController.text,
+                  'doctorname': infolistProvider.currentInfo.docName,
                   'bookingcalendar':
                       infolistProvider.currentInfo.bookingcalendar,
+                  'uniqueIdentifier': _identifier,
+                  'createDateTime': _now,
                 };
 
                 final Map<String, dynamic> successInfo =
@@ -455,7 +499,6 @@ class _PatientFormState extends State<PatientForm> {
                 print(_formData);
 
                 if (successInfo['success']) {
-                  print(patientProvider.currentPatient.startTime);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -467,7 +510,7 @@ class _PatientFormState extends State<PatientForm> {
                 }
               }
             },
-            color: Colors.teal[700],
+            color: isEnabled == true ? Colors.teal[700] : Colors.teal[100],
             shape: new RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(5.0),
             ),
@@ -566,5 +609,24 @@ class _PatientFormState extends State<PatientForm> {
       });
       return false;
     }
+  }
+
+  getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    cacheName = prefs.getString('name');
+    cachePatientName = prefs.getString('patientName');
+    cacheIdNo = prefs.getString('idno');
+    cacheAge = prefs.getString('age');
+    cacheAddress = prefs.getString('address');
+    cacheMobile = prefs.getString('mobile');
+    cacheBValue = prefs.getString('bValue');
+
+    nameController.text = cacheName;
+    cacheBValue == '0' ? patientController.text = cachePatientName : [];
+    idController.text = cacheIdNo;
+    cacheBValue == '0' ? ageController.text = cacheAge : [];
+    addressController.text = cacheAddress;
+    mobileController.text = cacheMobile;
   }
 }

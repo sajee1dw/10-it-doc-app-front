@@ -22,7 +22,8 @@ class ReceiptPage extends StatelessWidget {
     // //'${formated.format(patient.startTime)}'
     // var startDateTime = ("${patient.startTime}");
     // var startTime = ("${formated.format(patient.startTime)}");
-    // print(startTime);
+
+    
 
     return Scaffold(
       appBar: AppBar(
@@ -103,7 +104,7 @@ class ReceiptPage extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Sansation',
                             color: Colors.teal[100],
-                            fontSize: 18,
+                            fontSize: 17,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -164,7 +165,7 @@ class ReceiptPage extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 30.0),
                   child: Container(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                     // mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
@@ -409,7 +410,7 @@ class ReceiptPage extends StatelessWidget {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            0.18,
+                                                            0.20,
                                                     child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -425,7 +426,8 @@ class ReceiptPage extends StatelessWidget {
                                                             fontFamily: 'Louis',
                                                             fontSize: 18,
                                                             fontWeight:
-                                                                FontWeight.w600,
+                                                                FontWeight
+                                                                    .w600, //
                                                             color: Colors.white,
                                                           ),
                                                         ),
@@ -443,6 +445,9 @@ class ReceiptPage extends StatelessWidget {
                                             )),
                                           ),
                                         )
+
+
+                                        
                                       ]
                                     : <Widget>[
                                         failMassage(),
@@ -487,7 +492,7 @@ class ReceiptPage extends StatelessWidget {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            0.18,
+                                                            0.20,
                                                     child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -532,6 +537,8 @@ class ReceiptPage extends StatelessWidget {
     );
   }
 }
+
+
 
 Widget failMassage() {
   return Padding(

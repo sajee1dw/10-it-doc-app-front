@@ -2,8 +2,8 @@ import 'package:doc/providers/doctorarealist.dart';
 import 'package:doc/providers/doctorinfo.dart';
 import 'package:doc/providers/patient.dart';
 import 'package:doc/providers/timeSlot.dart';
+import 'package:doc/providers/userData.dart';
 import 'package:doc/screens/selection.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (ctx) => PatientProvider()),
           ChangeNotifierProvider(create: (ctx) => TimeSlotProvider()),
           ChangeNotifierProvider(create: (ctx) => InfolistProvider()),
+          ChangeNotifierProvider(create: (ctx) => UserDataProvider()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

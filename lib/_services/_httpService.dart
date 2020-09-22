@@ -20,4 +20,8 @@ class HttpService {
       http.post(_BASEURL + '/GetDoctorBookingCalendar',
           body: json.encode(date),
           headers: {'content-type': 'application/json'});
+  static Future<http.Response> getUserData(data) =>
+      http.post(_BASEURL + '/GetUserData',
+          body: json.encode(data),
+          headers: {'content-type': 'application/json'});
 }

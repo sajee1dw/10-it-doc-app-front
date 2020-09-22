@@ -20,13 +20,13 @@ class TimeSlotProvider with ChangeNotifier {
       final http.Response response = await HttpService.getTimeSlots(date);
 
       final List responseData = json.decode(response.body);
+      print("Time Slot"+response.body);
       if (response.statusCode == 200) {
         List allSlots = [];
         responseData.forEach((element) {
           allSlots.addAll(element);
         });
         timeSlots = allSlots.map((slot) => TimeSlot.fromJson(slot)).toList();
-        print(allSlots);
         isLoading = false;
         notifyListeners();
         return {'success': true, 'response': timeSlots};
@@ -39,5 +39,4 @@ class TimeSlotProvider with ChangeNotifier {
       throw Exception(e.toString());
     }
   }
- 
 }
