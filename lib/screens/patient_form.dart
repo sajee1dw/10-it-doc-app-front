@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-import 'package:unique_identifier/unique_identifier.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 
 class PatientForm extends StatefulWidget {
   final TimeSlot timeSlot;
@@ -52,22 +52,22 @@ class _PatientFormState extends State<PatientForm> {
     setState(() {
       getData();
     });
-    initUniqueIdentifierState();
+    initPlatformState();
     return super.initState();
   }
 
-  Future<void> initUniqueIdentifierState() async {
-    String identifier;
+  Future<void> initPlatformState() async {
+    String deviceId;
     try {
-      identifier = await UniqueIdentifier.serial;
+      deviceId = await PlatformDeviceId.getDeviceId;
     } on PlatformException {
-      identifier = 'Failed to get Unique Identifier';
-    }
-
+      deviceId = 'Failed to get deviceId.';
+    } 
     if (!mounted) return;
 
     setState(() {
-      _identifier = identifier;
+      _identifier = deviceId;
+      print("****deviceId->$_identifier");
     });
   }
 

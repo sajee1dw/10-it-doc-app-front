@@ -24,8 +24,7 @@ dependencies:
   moment: ^0.0.1
   flutter_spinkit: ^4.1.2+1
   shared_preferences: ^0.5.8
-  
-  
+  platform_device_id: ^0.1.1
   #flutter_datetime_picker:
     #git:
       #url: https://github.com/derohimat/flutter_datetime_picker.git
@@ -39,7 +38,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  unique_identifier: ^0.0.3
+  
+    
+  
   
 
 

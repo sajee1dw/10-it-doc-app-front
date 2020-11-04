@@ -10,8 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:unique_identifier/unique_identifier.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 
 class SelectionPage extends StatefulWidget {
   SelectionPage({Key key}) : super(key: key);
@@ -43,18 +42,18 @@ class _SelectionPageState extends State<SelectionPage> {
     }
   }
 
-  Future<void> initUniqueIdentifierState() async {
-    String identifier;
+  Future<void> initPlatformState() async {
+    String deviceId;
     try {
-      identifier = await UniqueIdentifier.serial;
+      deviceId = await PlatformDeviceId.getDeviceId;
     } on PlatformException {
-      identifier = 'Failed to get Unique Identifier';
+      deviceId = 'Failed to get deviceId.';
     }
-
     if (!mounted) return;
 
     setState(() {
-      _identifier = identifier;
+      _identifier = deviceId;
+      print("******deviceId->$_identifier");
     });
   }
 
@@ -91,7 +90,7 @@ class _SelectionPageState extends State<SelectionPage> {
   void initState() {
     super.initState();
     this._getData();
-    this.initUniqueIdentifierState();
+    this.initPlatformState();
     this.getData();
   }
 
