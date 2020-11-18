@@ -1,3 +1,4 @@
+import 'package:doc/models/slotTitle.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:doc/models/timeSlot.dart';
@@ -18,6 +19,7 @@ DateFormat formated = new DateFormat("HH:mm");
 class _TimeslotsState extends State<Timeslots> {
   DateTime selectedDate = DateTime.now();
   final now = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     final InfolistProvider infolistProvider =
@@ -244,112 +246,156 @@ class _TimeslotsState extends State<Timeslots> {
                         color: Colors.white,
                       ),
                     )
-                  : GridView.count(
-                      childAspectRatio: 2,
-                      //gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                      shrinkWrap: true,
-                      crossAxisCount: 2,
-                      // itemCount: state.bestContributeCountry.length,
-                      scrollDirection: Axis.vertical,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      // itemBuilder: (BuildContext context, int index) {
-                      children: List.generate(
-                          timeSlotsProvider.timeSlots.length, (index) {
-                        TimeSlot currentTimeSlot =
-                            timeSlotsProvider.timeSlots.length != 0
-                                ? timeSlotsProvider.timeSlots[index]
-                                : [];
-
-                        // var x = currentTimeSlot.date +'T'+ currentTimeSlot.startTime +'00:00'  ;
+                  : ListView.builder(
+                      itemCount: timeSlotsProvider.slotTitles.length,
+                      itemBuilder: (BuildContext ctx, int i) {
+                        SlotTitle currentSlotTitle =
+                            timeSlotsProvider.slotTitles[i];
                         return Container(
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          color: Colors.transparent,
-                          child: new Column(
-                            //crossAxisAlignment: CrossAxisAlignment.stretch,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            // shrinkWrap: true,
-                            children: <Widget>[
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 5,
-                                    child: Container(
-                                      height: 60.0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 5.0),
-                                        child: RaisedButton(
-                                          onPressed: () {
-                                            if (currentTimeSlot.slot != 1) {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PatientForm(
-                                                              currentTimeSlot)));
-                                            }
-                                          },
-                                          color: Colors.teal,
-                                          shape: new RoundedRectangleBorder(
-                                            borderRadius:
-                                                new BorderRadius.circular(5.0),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(0),
-                                            child: Container(
-                                              width: 180,
-                                              child: Center(
-                                                  child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: <Widget>[
-                                                    Text(
-                                                      "${formated.format(DateTime.parse(currentTimeSlot.date + 'T' + currentTimeSlot.startTime + '+00:00').toLocal())} - ${formated.format(DateTime.parse(currentTimeSlot.date + 'T' + currentTimeSlot.endTime + '+00:00').toLocal())}",
-                                                      //"${currentTimeSlot.startTime} - ${currentTimeSlot.endTime}",
-                                                      style: TextStyle(
-                                                        fontFamily: 'Louis',
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: currentTimeSlot
-                                                                    .slot ==
-                                                                1
-                                                            ? Colors.teal[700]
-                                                            : Colors.white,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      currentTimeSlot.slot == 1
-                                                          ? "Not Awailable"
-                                                          : "Awailable",
-                                                      style: TextStyle(
-                                                        fontFamily: 'Louis',
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: currentTimeSlot
-                                                                    .slot ==
-                                                                1
-                                                            ? Colors.red[200]
-                                                            : Colors.teal[200],
-                                                      ),
-                                                    ),
-                                                  ])),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                          child: Column(
+                            children: [
+                              Text(
+                                "Title : " + (currentSlotTitle.title).split('-')[0],
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18),
                               ),
+                              GridView.count(
+                                childAspectRatio: 2,
+                                //gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                                shrinkWrap: true,
+                                crossAxisCount: 2,
+                                // itemCount: state.bestContributeCountry.length,
+                                scrollDirection: Axis.vertical,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                // itemBuilder: (BuildContext context, int index) {
+                                children: List.generate(
+                                  currentSlotTitle.slots.length,
+                                  
+                                  (index) {
+                                    TimeSlot currentTimeSlot =
+                                        currentSlotTitle.slots.length != 0
+                                            ? TimeSlot.fromJson(
+                                                currentSlotTitle.slots[index])
+                                            : null;
+
+                                    // var x = currentTimeSlot.date +'T'+ currentTimeSlot.startTime +'00:00'  ;
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.5,
+                                      color: Colors.transparent,
+                                      child: new Column(
+                                        //crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        // shrinkWrap: true,
+                                        children: <Widget>[
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 5,
+                                                child: Container(
+                                                  height: 60.0,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 5.0),
+                                                    child: RaisedButton(
+                                                      onPressed: () {
+                                                        print(currentTimeSlot.available);
+                                                        if (currentTimeSlot
+                                                                .available !=
+                                                            "0") {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      PatientForm(
+                                                                          currentTimeSlot)));
+                                                        }
+                                                      },
+                                                      color: Colors.teal,
+                                                      shape:
+                                                          new RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            new BorderRadius
+                                                                .circular(5.0),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.all(0),
+                                                        child: Container(
+                                                          width: 180,
+                                                          child: Center(
+                                                              child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: <
+                                                                      Widget>[
+                                                                Text(
+                                                                  "${formated.format(DateTime.parse(currentTimeSlot.date + 'T' + currentTimeSlot.startTime + '+00:00').toLocal())} - ${formated.format(DateTime.parse(currentTimeSlot.date + 'T' + currentTimeSlot.endTime + '+00:00').toLocal())}",
+                                                                  //"${currentTimeSlot.startTime} - ${currentTimeSlot.endTime}",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        'Louis',
+                                                                    fontSize:
+                                                                        18,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: currentTimeSlot.available ==
+                                                                            "0"
+                                                                        ? Colors.teal[
+                                                                            700]
+                                                                        : Colors
+                                                                            .white,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  currentTimeSlot
+                                                                              .available ==
+                                                                          "0"
+                                                                      ? "Not Available"
+                                                                      : currentTimeSlot.available +" Slot Available",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        'Louis',
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: currentTimeSlot.available ==
+                                                                            "0"
+                                                                        ? Colors.red[
+                                                                            200]
+                                                                        : Colors
+                                                                            .teal[200],
+                                                                  ),
+                                                                ),
+                                                              ])),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
                             ],
                           ),
                         );
-                      }),
-
-                      // }
+                      },
                     ),
             ),
           ),

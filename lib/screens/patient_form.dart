@@ -481,6 +481,7 @@ class _PatientFormState extends State<PatientForm> {
                   'endTime':
                       '${widget.timeSlot.date}T${formated.format(DateTime.parse(widget.timeSlot.date + 'T' + widget.timeSlot.endTime + '+00:00').toLocal())}:00',
                   //'${widget.timeSlot.date}T${widget.timeSlot.endTime}:00',
+                  'fullTitle':'${widget.timeSlot.fullTitle}',
                   'name': nameController.text,
                   'patientName': patientController.text,
                   'idno': idController.text,

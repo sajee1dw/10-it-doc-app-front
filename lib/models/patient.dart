@@ -10,6 +10,7 @@ class Patient {
   String address;
   String mobile;
   String bValue;
+  String title;
 
   Patient(
       {this.eventName,
@@ -22,10 +23,11 @@ class Patient {
       this.age,
       this.address,
       this.mobile,
-      this.bValue});
+      this.bValue,
+      this.title});
 
   factory Patient.fromJson(Map<String, dynamic> json) => Patient(
-        eventName: json["eventName"],
+        eventName: json["eventName"],  
         date: json["date"],
         startTime: json["start"],
         endTime: json["end"],
@@ -36,5 +38,6 @@ class Patient {
         address: json["address"],
         mobile: json["mobile"],
         bValue: json["bValue"],
+        title: json["title"],
       );
 }
