@@ -1,6 +1,7 @@
 import 'package:doc/providers/patient.dart';
 import 'package:doc/providers/timeSlot.dart';
 import 'package:doc/screens/timeslots.dart';
+import 'package:doc/theme/colors/light_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:doc/screens/selection.dart';
 import 'package:doc/providers/doctorinfo.dart';
@@ -23,26 +24,29 @@ class ReceiptPage extends StatelessWidget {
     // var startDateTime = ("${patient.startTime}");
     // var startTime = ("${formated.format(patient.startTime)}");
 
-    
-
     return Scaffold(
       appBar: AppBar(
+        leading: new IconButton(
+            icon: new Icon(Icons.arrow_back_ios, color: Colors.white, size: 35),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          backgroundColor: LightColors.kDarkYellow,
           title: Center(
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Image.asset(
-              'assets/logo/sampleLogo.png',
-              fit: BoxFit.contain,
-              height: 32,
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Image.asset(
+                  'assets/logo/sampleLogo.png',
+                  fit: BoxFit.contain,
+                  height: 32,
+                ),
+              ],
             ),
-          ],
-        ),
-      )),
+          )),
       body: Column(children: <Widget>[
         Container(
           height: 100.0,
-          color: Colors.teal,
+          color: Colors.white,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -53,8 +57,7 @@ class ReceiptPage extends StatelessWidget {
                       ? 'Booking Successful !'
                       : 'Booking Failed !',
                   style: TextStyle(
-                    fontFamily: 'Louis',
-                    color: Colors.red[200],
+                    color: Colors.red[900],
                     fontSize: 26,
                     fontWeight: FontWeight.w700,
                   ),
@@ -71,8 +74,8 @@ class ReceiptPage extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: <Color>[
-                Colors.teal,
-                Colors.teal[900],
+                Colors.white,
+                Colors.white,
               ],
             ),
           ),
@@ -83,7 +86,9 @@ class ReceiptPage extends StatelessWidget {
                   margin: const EdgeInsets.fromLTRB(17.0, 0, 8.0, 0),
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.teal[200])),
+                      borderRadius: new BorderRadius.circular(30.0),
+                      color: LightColors.kLightYellow2,
+                      border: Border.all(color: Colors.white24)),
                   child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -91,10 +96,9 @@ class ReceiptPage extends StatelessWidget {
                         Text(
                           'Date : ',
                           style: TextStyle(
-                            fontFamily: 'Sansation',
-                            color: Colors.teal[200],
-                            fontSize: 15,
-                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                         Text(
@@ -102,9 +106,8 @@ class ReceiptPage extends StatelessWidget {
                           patientProvider.currentPatient.date,
 
                           style: TextStyle(
-                            fontFamily: 'Sansation',
-                            color: Colors.teal[100],
-                            fontSize: 17,
+                            color: Colors.grey,
+                            fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -117,7 +120,9 @@ class ReceiptPage extends StatelessWidget {
                   margin: const EdgeInsets.fromLTRB(8.0, 0, 17.0, 0),
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.teal[200])),
+                    borderRadius: new BorderRadius.circular(30.0),
+                      color: LightColors.kLightYellow2,
+                      border: Border.all(color: Colors.white24)),
                   child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -125,10 +130,9 @@ class ReceiptPage extends StatelessWidget {
                         Text(
                           'Time : ',
                           style: TextStyle(
-                            fontFamily: 'Sansation',
-                            color: Colors.teal[200],
-                            fontSize: 15,
-                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                         Text(
@@ -136,8 +140,7 @@ class ReceiptPage extends StatelessWidget {
                           patientProvider.currentPatient.startTime,
                           // '${formated.format(DateTime.parse(patientProvider.currentPatient.date + 'T' + patientProvider.currentPatient.startTime + '+00:00').toLocal())}',
                           style: TextStyle(
-                            fontFamily: 'Sansation',
-                            color: Colors.teal[100],
+                            color: Colors.grey,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
@@ -156,8 +159,8 @@ class ReceiptPage extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: <Color>[
-                      Colors.teal[900],
-                      Colors.black,
+                      Colors.white,
+                      Colors.orange[200],
                     ],
                   ),
                 ),
@@ -165,20 +168,19 @@ class ReceiptPage extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 30.0),
                   child: Container(
                     child: Column(
-                     // mainAxisAlignment: MainAxisAlignment.start,
+                      // mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
                             infolistProvider.currentInfo != null
-                                ? 'Dr : ' +
+                                ? 'Name : ' +
                                     infolistProvider.currentInfo.docName
                                         .toUpperCase()
                                 : "",
                             style: TextStyle(
-                                fontFamily: 'Louis',
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 20,
-                                fontWeight: FontWeight.w600)),
+                                fontWeight: FontWeight.w700)),
                         Padding(
                           padding: const EdgeInsets.only(top: 7.0),
                           child: Text(
@@ -186,9 +188,9 @@ class ReceiptPage extends StatelessWidget {
                                   ? infolistProvider.currentInfo.docAddress
                                   : "",
                               style: TextStyle(
-                                color: Colors.teal[100],
+                                color: Colors.black,
                                 fontSize: 16,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               )),
                         ),
                         Padding(
@@ -206,8 +208,7 @@ class ReceiptPage extends StatelessWidget {
                                             text: TextSpan(
                                                 text: 'Name : ',
                                                 style: TextStyle(
-                                                    fontFamily: 'Louis',
-                                                    color: Colors.white,
+                                                    color: Colors.black,
                                                     fontSize: 18,
                                                     fontWeight:
                                                         FontWeight.w600),
@@ -216,90 +217,89 @@ class ReceiptPage extends StatelessWidget {
                                                       text: patientProvider
                                                           .currentPatient.name,
                                                       style: TextStyle(
-                                                          fontFamily: 'Louis',
-                                                          color: Colors.white,
+                                                          color: Colors.black,
                                                           fontSize: 18,
                                                           fontWeight:
                                                               FontWeight.w400)),
                                                 ]),
                                           ),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 6.0),
-                                          child: RichText(
-                                            text: TextSpan(
-                                                text: 'Patient Name : ',
-                                                style: TextStyle(
-                                                    fontFamily: 'Louis',
-                                                    color: Colors.white,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                                children: <TextSpan>[
-                                                  TextSpan(
-                                                      text: patientProvider
-                                                          .currentPatient
-                                                          .patient,
-                                                      style: TextStyle(
-                                                          fontFamily: 'Louis',
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w400)),
-                                                ]),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 6.0),
-                                          child: RichText(
-                                            text: TextSpan(
-                                                text: 'NIC Number : ',
-                                                style: TextStyle(
-                                                    fontFamily: 'Louis',
-                                                    color: Colors.white,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                                children: <TextSpan>[
-                                                  TextSpan(
-                                                      text: patientProvider
-                                                          .currentPatient.idno,
-                                                      style: TextStyle(
-                                                          fontFamily: 'Louis',
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w400)),
-                                                ]),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 6.0),
-                                          child: RichText(
-                                            text: TextSpan(
-                                                text: 'Age : ',
-                                                style: TextStyle(
-                                                    fontFamily: 'Louis',
-                                                    color: Colors.white,
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                                children: <TextSpan>[
-                                                  TextSpan(
-                                                      text: patientProvider
-                                                          .currentPatient.age,
-                                                      style: TextStyle(
-                                                          fontFamily: 'Louis',
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w400)),
-                                                ]),
-                                          ),
-                                        ),
+                                        // Padding(
+                                        //   padding: const EdgeInsets.only(
+                                        //       bottom: 6.0),
+                                        //   child: RichText(
+                                        //     text: TextSpan(
+                                        //         text: 'Patient Name : ',
+                                        //         style: TextStyle(
+                                        //             fontFamily: 'Louis',
+                                        //             color: Colors.black,
+                                        //             fontSize: 18,
+                                        //             fontWeight:
+                                        //                 FontWeight.w600),
+                                        //         children: <TextSpan>[
+                                        //           TextSpan(
+                                        //               text: patientProvider
+                                        //                   .currentPatient
+                                        //                   .patient,
+                                        //               style: TextStyle(
+                                        //                   fontFamily: 'Louis',
+                                        //                   color: Colors.black,
+                                        //                   fontSize: 18,
+                                        //                   fontWeight:
+                                        //                       FontWeight.w400)),
+                                        //         ]),
+                                        //   ),
+                                        // ),
+                                        // Padding(
+                                        //   padding: const EdgeInsets.only(
+                                        //       bottom: 6.0),
+                                        //   child: RichText(
+                                        //     text: TextSpan(
+                                        //         text: 'NIC Number : ',
+                                        //         style: TextStyle(
+                                        //             fontFamily: 'Louis',
+                                        //             color: Colors.black,
+                                        //             fontSize: 18,
+                                        //             fontWeight:
+                                        //                 FontWeight.w600),
+                                        //         children: <TextSpan>[
+                                        //           TextSpan(
+                                        //               text: patientProvider
+                                        //                   .currentPatient.idno,
+                                        //               style: TextStyle(
+                                        //                   fontFamily: 'Louis',
+                                        //                   color: Colors.black,
+                                        //                   fontSize: 18,
+                                        //                   fontWeight:
+                                        //                       FontWeight.w400)),
+                                        //         ]),
+                                        //   ),
+                                        // ),
+                                        // Padding(
+                                        //   padding: const EdgeInsets.only(
+                                        //       bottom: 6.0),
+                                        //   child: RichText(
+                                        //     text: TextSpan(
+                                        //         text: 'Age : ',
+                                        //         style: TextStyle(
+                                        //             fontFamily: 'Louis',
+                                        //             color: Colors.black,
+                                        //             fontSize: 18,
+                                        //             fontWeight:
+                                        //                 FontWeight.w600),
+                                        //         children: <TextSpan>[
+                                        //           TextSpan(
+                                        //               text: patientProvider
+                                        //                   .currentPatient.age,
+                                        //               style: TextStyle(
+                                        //                   fontFamily: 'Louis',
+                                        //                   color: Colors.black,
+                                        //                   fontSize: 18,
+                                        //                   fontWeight:
+                                        //                       FontWeight.w400)),
+                                        //         ]),
+                                        //   ),
+                                        // ),
                                         Padding(
                                           padding: const EdgeInsets.only(
                                               bottom: 6.0),
@@ -307,8 +307,7 @@ class ReceiptPage extends StatelessWidget {
                                             text: TextSpan(
                                                 text: 'Address : ',
                                                 style: TextStyle(
-                                                    fontFamily: 'Louis',
-                                                    color: Colors.white,
+                                                    color: Colors.black,
                                                     fontSize: 18,
                                                     fontWeight:
                                                         FontWeight.w600),
@@ -318,8 +317,7 @@ class ReceiptPage extends StatelessWidget {
                                                           .currentPatient
                                                           .address,
                                                       style: TextStyle(
-                                                          fontFamily: 'Louis',
-                                                          color: Colors.white,
+                                                          color: Colors.black,
                                                           fontSize: 18,
                                                           fontWeight:
                                                               FontWeight.w400)),
@@ -333,8 +331,7 @@ class ReceiptPage extends StatelessWidget {
                                             text: TextSpan(
                                                 text: 'Phone Number : ',
                                                 style: TextStyle(
-                                                    fontFamily: 'Louis',
-                                                    color: Colors.white,
+                                                    color: Colors.black,
                                                     fontSize: 18,
                                                     fontWeight:
                                                         FontWeight.w600),
@@ -344,8 +341,7 @@ class ReceiptPage extends StatelessWidget {
                                                           .currentPatient
                                                           .mobile,
                                                       style: TextStyle(
-                                                          fontFamily: 'Louis',
-                                                          color: Colors.white,
+                                                          color: Colors.black,
                                                           fontSize: 18,
                                                           fontWeight:
                                                               FontWeight.w400)),
@@ -360,7 +356,7 @@ class ReceiptPage extends StatelessWidget {
                                                 text: 'Reference number : ',
                                                 style: TextStyle(
                                                     fontFamily: 'Louis',
-                                                    color: Colors.white60,
+                                                    color: Colors.black,
                                                     fontSize: 15,
                                                     fontWeight:
                                                         FontWeight.w500),
@@ -373,7 +369,7 @@ class ReceiptPage extends StatelessWidget {
                                                               .bValue,
                                                       style: TextStyle(
                                                           fontFamily: 'Louis',
-                                                          color: Colors.white,
+                                                          color: Colors.black,
                                                           fontSize: 15,
                                                           fontWeight:
                                                               FontWeight.w300)),
@@ -381,8 +377,8 @@ class ReceiptPage extends StatelessWidget {
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 50),
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 150, 0, 0),
                                           child: Container(
                                             child: Center(
                                                 child: Padding(
@@ -401,7 +397,7 @@ class ReceiptPage extends StatelessWidget {
                                                     new RoundedRectangleBorder(
                                                   borderRadius:
                                                       new BorderRadius.circular(
-                                                          5.0),
+                                                          30.0),
                                                 ),
                                                 child: Padding(
                                                   padding: EdgeInsets.all(8),
@@ -423,11 +419,10 @@ class ReceiptPage extends StatelessWidget {
                                                         Text(
                                                           'Done',
                                                           style: TextStyle(
-                                                            fontFamily: 'Louis',
-                                                            fontSize: 18,
+                                                            fontSize: 16,
                                                             fontWeight:
                                                                 FontWeight
-                                                                    .w600, //
+                                                                    .w700, //
                                                             color: Colors.white,
                                                           ),
                                                         ),
@@ -445,15 +440,12 @@ class ReceiptPage extends StatelessWidget {
                                             )),
                                           ),
                                         )
-
-
-                                        
                                       ]
                                     : <Widget>[
                                         failMassage(),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 50),
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 150, 0, 0),
                                           child: Container(
                                             child: Center(
                                                 child: Padding(
@@ -483,7 +475,7 @@ class ReceiptPage extends StatelessWidget {
                                                     new RoundedRectangleBorder(
                                                   borderRadius:
                                                       new BorderRadius.circular(
-                                                          5.0),
+                                                          30.0),
                                                 ),
                                                 child: Padding(
                                                   padding: EdgeInsets.all(8),
@@ -505,10 +497,9 @@ class ReceiptPage extends StatelessWidget {
                                                         Text(
                                                           'Again',
                                                           style: TextStyle(
-                                                            fontFamily: 'Louis',
-                                                            fontSize: 18,
+                                                            fontSize: 16,
                                                             fontWeight:
-                                                                FontWeight.w600,
+                                                                FontWeight.w700,
                                                             color: Colors.white,
                                                           ),
                                                         ),
@@ -537,8 +528,6 @@ class ReceiptPage extends StatelessWidget {
     );
   }
 }
-
-
 
 Widget failMassage() {
   return Padding(

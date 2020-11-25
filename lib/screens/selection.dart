@@ -1,45 +1,34 @@
-import 'package:doc/models/area.dart';
-import 'package:doc/providers/doctorarealist.dart';
+import 'package:doc/Widgets/top_container.dart';
+import 'package:doc/theme/colors/light_colors.dart';
+import 'package:flutter/material.dart';
+import "package:doc/models/company.dart";
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:doc/providers/timeSlot.dart';
 import 'package:doc/providers/userData.dart';
 import 'package:doc/screens/timeslots.dart';
 import 'package:doc/screens/user_booked.dart';
-import 'package:flutter/material.dart';
 import 'package:doc/providers/doctorinfo.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:platform_device_id/platform_device_id.dart';
+//import 'package:doc/widgets/top_container.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class SelectionPage extends StatefulWidget {
-  SelectionPage({Key key}) : super(key: key);
-
   @override
-  _SelectionPageState createState() => _SelectionPageState();
+  _ListPageState createState() => _ListPageState();
 }
 
-class _SelectionPageState extends State<SelectionPage> {
+class _ListPageState extends State<SelectionPage> {
   String cacheDocArea, cacheDocSuburb, cacheBValue;
+  List lessons;
   String _identifier = 'Unknown';
-  Future<Map<String, dynamic>> data;
-  List<Area> areas = [];
-  List<Sub> allSuburbs = [];
-  List<Sub> suburbs = [];
-  List<Doctor> allDoctors = [];
-  List<Doctor> doctors = [];
-  Area _selectedArea;
-  Sub _selectedSub;
-  Doctor _selectedDoc;
-  String _areaDisabledText = 'District first';
-  String _doctorDisabledText = ' Area first';
-
-  void _getData() async {
-    try {
-      data = ArealistProvider.getAreaList();
-    } catch (e) {
-      print(e);
-    }
+  @override
+  void initState() {
+    lessons = getCompanies();
+    super.initState();
+    initPlatformState();
   }
 
   Future<void> initPlatformState() async {
@@ -57,467 +46,274 @@ class _SelectionPageState extends State<SelectionPage> {
     });
   }
 
-  _onAreaSelected(Area area) {
-    setState(() {
-      _selectedArea = area;
-      _selectedSub = null;
-      _selectedDoc = null;
-      suburbs =
-          allSuburbs.where((i) => i.aName == _selectedArea.aName).toList();
-      if (suburbs.isEmpty) _areaDisabledText = 'No Areas Now';
-      _doctorDisabledText = ' Area first';
-      doctors.clear();
-    });
-  }
-
-  _onSelectSub(Sub sub) {
-    setState(() {
-      _selectedSub = sub;
-      _selectedDoc = null;
-      doctors =
-          allDoctors.where((i) => i.suburb == _selectedSub.sName).toList();
-      if (doctors.isEmpty) _doctorDisabledText = 'No Doctors ';
-    });
-  }
-
-  _onSelectDoc(Doctor doctor) {
-    setState(() {
-      _selectedDoc = doctor;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    this._getData();
-    this.initPlatformState();
-    this.getData();
+  Text subheading(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+          color: LightColors.kDarkBlue,
+          fontSize: 20.0,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.2),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final InfolistProvider infolistProvider =
-        Provider.of<InfolistProvider>(context, listen: true);
     final TimeSlotProvider timeSlotsProvider =
         Provider.of<TimeSlotProvider>(context, listen: true);
-    print(cacheDocArea);
+    double width = MediaQuery.of(context).size.width;
+    double height =MediaQuery.of(context).size.height;
+    ListTile makeListTile(Company company) => ListTile(
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          leading: Container(
+            child: CircleAvatar(
+              radius: 40,
+              // backgroundColor: Color(0xffFDCF09),
+              child: CircleAvatar(
+                radius: 55,
+                backgroundImage: AssetImage('assets/logo/sampleLogo.png'),
+              ),
+            ),
+          ),
+          title: Text(
+            company.name,
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          subtitle: Row(
+            children: <Widget>[
+              Expanded(
+                  flex: 4,
+                  child: Container(
+                    child: Text(
+                      company.address,
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black45),
+                    ),
+                  ))
+            ],
+          ),
+          trailing:
+              Icon(Icons.keyboard_arrow_right, color: Colors.black, size: 40.0),
+          onTap: () async {
+            final InfolistProvider infolistProvider =
+                Provider.of<InfolistProvider>(context, listen: false);
+
+            final Map<String, dynamic> _infoData = {
+              'userId': '${company.id}',
+            };
+            final Map<String, dynamic> successInfo =
+                await infolistProvider.getInfo(_infoData);
+
+            if (successInfo['success']) {
+              timeSlotsProvider.getTimeSlots({
+                'appointmentcalendar':
+                    infolistProvider.currentInfo.appointmentcalendar,
+                'bookingcalendar': infolistProvider.currentInfo.bookingcalendar
+              });
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Timeslots()));
+            } else {
+              print("something went wrong");
+            }
+          },
+        );
+
+    Card makeCard(Company company) => Card(
+          elevation: 8.0,
+          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          child: Container(
+            //decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+            child: makeListTile(company),
+          ),
+        );
+    Widget companyCard() {
+      return Container(
+        child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: lessons.length,
+          itemBuilder: (BuildContext context, int index) {
+            return makeCard(lessons[index]);
+          },
+        ),
+        decoration: ShapeDecoration(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(30),
+            ),
+          ),
+        ),
+      );
+    }
+
+    Widget bottomNavigationBar() {
+      return Container(
+        // elevation: 0,
+        child: Container(
+          height: 50,
+          width: width,
+          child: Row(
+            children: <Widget>[
+              SizedBox(width: 30.0),
+              IconButton(
+                color: LightColors.kDarkBlue,
+                icon: Icon(
+                  Icons.menu,
+                  size: 35,
+                ),
+                onPressed: () {},
+              ),
+              Spacer(),
+              IconButton(
+                color: LightColors.kDarkBlue,
+                icon: Icon(
+                  FontAwesomeIcons.calendarAlt,
+                  size: 30,
+                ),
+                onPressed: () async {
+                  final UserDataProvider userDataProvider =
+                      Provider.of<UserDataProvider>(context, listen: false);
+
+                  final Map<String, dynamic> _userData = {
+                    'uniqueIdentifier': _identifier,
+                  };
+                  _addData();
+                  final Map<String, dynamic> successInfo =
+                      await userDataProvider.getUserData(_userData);
+
+                  if (successInfo['success']) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => UserBooking()));
+                  } else {
+                    print("something went wrong");
+                  }
+                },
+              ),
+              SizedBox(width: 20.0),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: Colors.teal[900],
-      body: Center(
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Column(children: <Widget>[
-            Expanded(
-                flex: 4,
-                child: Wrap(
-                  spacing: 10.0,
+      backgroundColor: LightColors.kLightYellow,
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            TopContainer(
+              height: 200,
+              width: width,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Container(
-                      // margin: EdgeInsets.all(100.0),
-                      height: 280.0,
-                        
-                      decoration: BoxDecoration(
-                        color: Colors.teal,
-                        shape: BoxShape.rectangle,
-                        borderRadius: new BorderRadius.only(
-                            bottomLeft: Radius.elliptical(200, 50),
-                            bottomRight: Radius.elliptical(200, 50)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black38,
-                            blurRadius: 5.0,
-                            spreadRadius: 1.0,
-                            offset: Offset(
-                              0.0,
-                              5.0,
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: <Widget>[
+                    //     Icon(Icons.menu,
+                    //         color: LightColors.kDarkBlue, size: 30.0),
+                    //     Icon(Icons.search,
+                    //         color: LightColors.kDarkBlue, size: 25.0),
+                    //   ],
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5.0, 7.0, 3, 0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          CircularPercentIndicator(
+                            radius: 90.0,
+                            lineWidth: 8.0,
+                            animation: true,
+                            percent: 0.75,
+                            circularStrokeCap: CircularStrokeCap.round,
+                            progressColor: LightColors.kRed,
+                            backgroundColor: LightColors.kDarkYellow,
+                            center: CircleAvatar(
+                              backgroundColor: LightColors.kBlue,
+                              radius: 35.0,
+                              backgroundImage: AssetImage(
+                                'assets/images/sampleLogo2.png',
+                              ),
                             ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                child: Text(
+                                  'Book Me...',
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontSize: 30.0,
+                                    color: LightColors.kDarkBlue,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: Text(
+                                  'Booking app',
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: Colors.black45,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                            ],
                           )
                         ],
                       ),
-
-                      child: Center(
-                        child: Image(
-                          image: AssetImage('assets/logo/sampleLogo.png'),
-                          height: 100.0,
-                          width: 150.0,
-                        ),
-                      ),
-                    ), //widget
-                  ],
-                )
-                //
-                ),
-            Expanded(
-                flex: 3,
-                child: FutureBuilder<Map<String, dynamic>>(
-                    future: data,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.hasError) {
-                          return Center(
-                            child: Text(snapshot.error.toString()),
-                          );
-                        }
-                        this.areas = snapshot.data['areas'];
-                        this.allSuburbs = snapshot.data['suburbs'];
-                        this.allDoctors = snapshot.data['doctors'];
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                        width: 140,
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          'District',
-                                          style: TextStyle(
-                                            color: Colors.teal[100],
-                                            fontFamily: 'Louis',
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 20.0,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 15),
-                                      Container(
-                                        width: 180,
-                                        height: 30,
-                                        alignment: Alignment.centerLeft,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                        decoration: BoxDecoration(
-                                            color: Colors.teal[800],
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: DropdownButton<Area>(
-                                          isExpanded: true,
-                                          icon: Icon(Icons.expand_more),
-                                          iconEnabledColor: Colors.teal[100],
-                                          iconSize: 20,
-                                          underline: SizedBox(),
-                                          hint: Text('Select District',
-                                              style: TextStyle(
-                                                fontFamily: 'Louis',
-                                                color: Colors.teal[100],
-                                                fontWeight: FontWeight.w100,
-                                                fontSize: 17.0,
-                                              )),
-                                          disabledHint:
-                                              Text('No Districts Available'),
-                                          value: _selectedArea,
-                                          items: areas
-                                              .map((e) =>
-                                                  DropdownMenuItem<Area>(
-                                                      value: e,
-                                                      child: Text(e.aName
-                                                          .toUpperCase())))
-                                              .toList(),
-                                          onChanged: _onAreaSelected,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                        width: 140,
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          'Area',
-                                          style: TextStyle(
-                                            color: Colors.teal[100],
-                                            fontFamily: 'Louis',
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 20.0,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 15),
-                                      Container(
-                                        width: 180,
-                                        height: 30,
-                                        alignment: Alignment.centerLeft,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                        decoration: BoxDecoration(
-                                            color: Colors.teal[800],
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: DropdownButton<Sub>(
-                                          isExpanded: true,
-                                          icon: Icon(Icons.expand_more),
-                                          iconEnabledColor: Colors.teal[100],
-                                          iconSize: 20,
-                                          underline: SizedBox(),
-                                          hint: Text('Select Area',
-                                              style: TextStyle(
-                                                fontFamily: 'Louis',
-                                                color: Colors.teal[100],
-                                                fontWeight: FontWeight.w100,
-                                                fontSize: 17.0,
-                                              )),
-                                          disabledHint: Text(_areaDisabledText),
-                                          value: _selectedSub,
-                                          items: suburbs
-                                              .map((e) => DropdownMenuItem<Sub>(
-                                                  value: e,
-                                                  child: Text(
-                                                      e.sName.toUpperCase())))
-                                              .toList(),
-                                          onChanged: _onSelectSub,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                        width: 140,
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          'Doctor',
-                                          style: TextStyle(
-                                            color: Colors.teal[100],
-                                            fontFamily: 'Louis',
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 20.0,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 15),
-                                      Container(
-                                        width: 180,
-                                        height: 30,
-                                        alignment: Alignment.centerLeft,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                        decoration: BoxDecoration(
-                                            color: Colors.teal[800],
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: DropdownButton<Doctor>(
-                                          isExpanded: true,
-                                          icon: Icon(Icons.expand_more),
-                                          iconEnabledColor: Colors.teal[100],
-                                          iconSize: 20,
-                                          underline: SizedBox(),
-                                          hint: Text('Select Doctor',
-                                              style: TextStyle(
-                                                fontFamily: 'Louis',
-                                                color: Colors.teal[100],
-                                                fontWeight: FontWeight.w100,
-                                                fontSize: 17.0,
-                                              )),
-                                          disabledHint:
-                                              Text(_doctorDisabledText),
-                                          value: _selectedDoc,
-                                          items: doctors
-                                              .map((e) =>
-                                                  DropdownMenuItem<Doctor>(
-                                                      value: e,
-                                                      child: Text(e.name
-                                                          .toUpperCase())))
-                                              .toList(),
-                                          onChanged: _onSelectDoc,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: RaisedButton(
-                                onPressed: () async {
-                                  final InfolistProvider infolistProvider =
-                                      Provider.of<InfolistProvider>(context,
-                                          listen: false);
-
-                                  final Map<String, dynamic> _infoData = {
-                                    'docArea': '${_selectedArea.aName}',
-                                    'docSuburb': '${_selectedSub.sName}',
-                                    'docName': '${_selectedDoc.name}',
-                                  };
-                                  final Map<String, dynamic> successInfo =
-                                      await infolistProvider.getInfo(_infoData);
-
-                                  if (successInfo['success']) {
-                                    timeSlotsProvider.getTimeSlots({
-                                      'appointmentcalendar': infolistProvider
-                                          .currentInfo.appointmentcalendar,
-                                      'bookingcalendar': infolistProvider
-                                          .currentInfo.bookingcalendar
-                                    });
-                                    if (_selectedArea.aName != 'null' &&
-                                        _selectedSub.sName != 'null' &&
-                                        _selectedDoc.name != 'null') {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Timeslots()));
-                                    }
-                                  } else {
-                                    print("something went wrong");
-                                  }
-                                },
-                                color: Colors.teal,
-                                shape: new RoundedRectangleBorder(
-                                  borderRadius: new BorderRadius.circular(5.0),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Container(
-                                    width: 60,
-                                    child: timeSlotsProvider.isLoading &&
-                                            infolistProvider.isLoading
-                                        ? Center(
-                                            child: SpinKitFadingCircle(
-                                              color: Colors.white,
-                                            ),
-                                          )
-                                        : Row(
-                                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                'Next',
-                                                style: TextStyle(
-                                                  fontFamily: 'Louis',
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              Icon(
-                                                Icons.navigate_next,
-                                                color: Colors.white,
-                                                size: 22,
-                                              )
-                                            ],
-                                          ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                      return Center(
-                        child: SpinKitFadingCircle(
-                          color: Colors.white,
-                        ),
-                      );
-                    })),
-            Expanded(
-              flex: 1,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 60),
-                child: RichText(
-                  text: TextSpan(
-                    children: <TextSpan>[
-                      TextSpan(
-                          text: 'Doctor Booking App (Disclamer)\n\n',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                              fontFamily: 'Louis',
-                              color: Colors.teal[200])),
-                      TextSpan(
-                          text:
-                              'this is a doc boking app. this is a doc boking app. this is a doc boking app. this is a doc boking app. ',
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontFamily: 'Louis',
-                              color: Colors.teal[300]))
-                    ],
-                  ),
-                ),
-              ),
+                    )
+                  ]),
             ),
             Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(250, 10, 0, 60),
-                child: RaisedButton(
-                  onPressed: () async {
-                    final UserDataProvider userDataProvider =
-                        Provider.of<UserDataProvider>(context, listen: false);
-
-                    final Map<String, dynamic> _userData = {
-                      'uniqueIdentifier': _identifier,
-                    };
-                    _addData();
-                    final Map<String, dynamic> successInfo =
-                        await userDataProvider.getUserData(_userData);
-
-                    if (successInfo['success']) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UserBooking()));
-                    } else {
-                      print("something went wrong");
-                    }
-                  },
-                  color: Colors.teal,
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(9.0),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Container(
-                      width: 40,
-                      // height: 30,
-                      child: Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      color: Colors.transparent,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 10.0),
+                      child: Column(
                         children: <Widget>[
-                          // Text(
-                          //   'Next',
-                          //   style: TextStyle(
-                          //     fontFamily: 'Louis',
-                          //     fontSize: 18,
-                          //     fontWeight: FontWeight.w600,
-                          //     color: Colors.white,
-                          //   ),
-                          // ),
-                          Icon(
-                            Icons.history,
-                            color: Colors.black,
-                            size: 40,
-                          )
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              // subheading('My companies'),
+                            ],
+                          ),
+                          SizedBox(height: 15.0),
+                          companyCard()
                         ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-            )
-          ]),
+            ),
+          ],
         ),
+      ),
+      bottomNavigationBar: bottomNavigationBar(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: LightColors.kGreen,
+        child: Icon(
+          Icons.add,
+          size: 45,
+        ),
+        onPressed: () {},
       ),
     );
   }
@@ -527,12 +323,14 @@ class _SelectionPageState extends State<SelectionPage> {
     prefs.setString('identifier', _identifier);
     print(_identifier);
   }
+}
 
-  getData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    cacheBValue = prefs.getString('bValue');
-    cacheDocArea = prefs.getString('docArea');
-    cacheDocSuburb = prefs.getString('docSuburb');
-  }
+List getCompanies() {
+  return [
+    Company(
+        name: "AutoMax Service",
+        address: "Kalutara North",
+        id: "3k0n6tMxJf6Rw8izDiZi",
+        logo: "auotmax.png")
+  ];
 }

@@ -1,6 +1,7 @@
 import 'package:doc/models/userData.dart';
 import 'package:doc/providers/userData.dart';
 import 'package:doc/screens/booked_data.dart';
+import 'package:doc/theme/colors/light_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -13,81 +14,105 @@ class UserBooking extends StatefulWidget {
 
 class _UserBookingState extends State<UserBooking> {
   String cacheIdentifier;
- @override
+  @override
   void initState() {
     setState(() {
       getData();
     });
     return super.initState();
   }
+
   Widget build(BuildContext context) {
     final UserDataProvider userDataProvider =
         Provider.of<UserDataProvider>(context, listen: true);
     print(cacheIdentifier);
     return Scaffold(
       appBar: AppBar(
+        leading: new IconButton(
+            icon: new Icon(Icons.arrow_back_ios, color: Colors.white, size: 35),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          backgroundColor: LightColors.kDarkYellow,
           title: Center(
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            // Image.asset(
-            //   'assets/logo/sampleLogo.png',
-            //   fit: BoxFit.contain,
-            //   height: 32,
-            // ),
-          ],
-        ),
-      )),
-
-      // ),
-      body: Column(
-        children: <Widget>[
-          // Expanded(
-          //   flex: 2,
-          //   child:
-          Container(
-            height: 80.0,
-            color: Colors.teal,
-            child: Row(
-              children: <Widget>[
-                //  Container(
-                //    color: Colors.red,
-                //    child:
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
+            
+            child: new Row(
+              
+              mainAxisAlignment: MainAxisAlignment.end,
+              children:<Widget> [
+                Padding(
+                      padding: const EdgeInsets.fromLTRB(15.0, 7.0, 3, 0),
                       child: Text(
-                        'Your Bookings......!',
+                        'Your Bookings.!',
                         style: TextStyle(
-                          fontFamily: 'Louis',
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
+                          color: Colors.black,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
                         ),
                         textAlign: TextAlign.center,
                       ),
                     ),
+              ],
+            ),
+          )
+          ),
+
+      // ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            height: 60.0,
+            color: Colors.white,
+            child: Row(
+              children: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(15.0, 7.0, 3, 0),
+                    //   child: Text(
+                    //     'Your Bookings.!',
+                    //     style: TextStyle(
+                    //       color: Colors.black,
+                    //       fontSize: 22,
+                    //       fontWeight: FontWeight.w700,
+                    //     ),
+                    //     textAlign: TextAlign.center,
+                    //   ),
+                    // ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(250.0, 5.0, 10, 0),
+                      padding: const EdgeInsets.fromLTRB(280.0, 0.0, 10, 0),
                       child: FlatButton(
-                        color: Colors.blue,
+                        color: LightColors.kGreen,
                         textColor: Colors.white,
-                        disabledColor: Colors.grey,
-                        disabledTextColor: Colors.black,
-                        padding: EdgeInsets.all(8.0),
-                        splashColor: Colors.blueAccent,
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0),
+                        ),
                         onPressed: () {
                           userDataProvider.getUserData({
                             'uniqueIdentifier': cacheIdentifier,
                             'clearLogId': cacheIdentifier,
                           });
                         },
-                        child: Text(
-                          "Clear log",
-                          style: TextStyle(fontSize: 20.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            // Expanded(
+                            Text(
+                              'Clear',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700, //
+                                color: Colors.white,
+                              ),
+                            ),
+                            // Icon(
+                            //   Icons.navigate_next,
+                            //   color: Colors.white,
+                            //   //size: 22,
+                            // )
+                          ],
                         ),
                       ),
                     ),
@@ -110,10 +135,7 @@ class _UserBookingState extends State<UserBooking> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: <Color>[
-                    Colors.teal[900],
-                    Colors.black,
-                  ],
+                  colors: <Color>[Colors.white, Colors.orange[200]],
                 ),
               ),
               child: userDataProvider.isLoading
@@ -162,10 +184,10 @@ class _UserBookingState extends State<UserBooking> {
                                                               currentUserData)));
                                             }
                                           },
-                                          color: Colors.teal,
+                                          color: LightColors.kLightYellow2,
                                           shape: new RoundedRectangleBorder(
                                             borderRadius:
-                                                new BorderRadius.circular(5.0),
+                                                new BorderRadius.circular(40.0),
                                           ),
                                           child: Padding(
                                             padding: EdgeInsets.all(0),
@@ -178,7 +200,7 @@ class _UserBookingState extends State<UserBooking> {
                                                               .center,
                                                       children: <Widget>[
                                                     Text(
-                                                      "Doctor -: " +
+                                                      "Name -: " +
                                                           currentUserData
                                                               .doctorName +
                                                           "               " +
@@ -191,36 +213,13 @@ class _UserBookingState extends State<UserBooking> {
                                                           (currentUserData
                                                                   .startTime)
                                                               .split("T")[1],
-                                                      //"${formated.format(DateTime.parse(currentTimeSlot.date + 'T' + currentTimeSlot.startTime + '+00:00').toLocal())} - ${formated.format(DateTime.parse(currentTimeSlot.date + 'T' + currentTimeSlot.endTime + '+00:00').toLocal())}",
-                                                      //"${currentTimeSlot.startTime} - ${currentTimeSlot.endTime}",
                                                       style: TextStyle(
-                                                        fontFamily: 'Louis',
-                                                        fontSize: 18,
+                                                        fontSize: 16,
                                                         fontWeight:
-                                                            FontWeight.w600,
-                                                        color: currentUserData
-                                                                    .bValue ==
-                                                                1
-                                                            ? Colors.teal[700]
-                                                            : Colors.white,
+                                                            FontWeight.w500,
+                                                        color: Colors.black,
                                                       ),
                                                     ),
-                                                    // Text(
-                                                    //   currentUserData.bValue == 1
-                                                    //       ? "Not Awailable"
-                                                    //       : "Awailable",
-                                                    //   style: TextStyle(
-                                                    //     fontFamily: 'Louis',
-                                                    //     fontSize: 12,
-                                                    //     fontWeight:
-                                                    //         FontWeight.w600,
-                                                    //     color: currentUserData
-                                                    //                 .bValue ==
-                                                    //             1
-                                                    //         ? Colors.red[200]
-                                                    //         : Colors.teal[200],
-                                                    //   ),
-                                                    // ),
                                                   ])),
                                             ),
                                           ),

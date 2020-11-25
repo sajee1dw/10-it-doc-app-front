@@ -3,9 +3,9 @@ class UserData {
   String startTime;
   String endTime;
   String name;
-  String patient;
-  String idno;
-  String age;
+  // String patient;
+  // String idno;
+  // String age;
   String address;
   String mobile;
   int bValue;
@@ -16,9 +16,9 @@ class UserData {
       this.startTime,
       this.endTime,
       this.name,
-      this.patient,
-      this.idno,
-      this.age,
+      // this.patient,
+      // this.idno,
+      // this.age,
       this.address,
       this.mobile,
       this.bValue,
@@ -28,9 +28,9 @@ class UserData {
     this.startTime = parsedJson['startDateTime'];
     this.endTime = parsedJson['endDateTime'];
     this.name = parsedJson['name'];
-    this.patient = parsedJson['patient'];
-    this.idno = parsedJson['idNo'];
-    this.age = parsedJson['age'];
+    // this.patient = parsedJson['patient'];
+    // this.idno = parsedJson['idNo'];
+    // this.age = parsedJson['age'];
     this.address = parsedJson['address'];
     this.mobile = parsedJson['mobile'];
     this.bValue = parsedJson['bvalue'];

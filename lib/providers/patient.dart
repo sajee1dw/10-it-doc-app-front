@@ -36,9 +36,9 @@ class PatientProvider with ChangeNotifier {
   _addData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('name', currentPatient.name);
-    prefs.setString('patientName', currentPatient.patient);
-    prefs.setString('idno', currentPatient.idno);
-    prefs.setString('age', currentPatient.age);
+    // prefs.setString('patientName', currentPatient.patient);
+    // prefs.setString('idno', currentPatient.idno);
+    // prefs.setString('age', currentPatient.age);
     prefs.setString('address', currentPatient.address);
     prefs.setString('mobile', currentPatient.mobile);
     prefs.setString('bValue', currentPatient.bValue);

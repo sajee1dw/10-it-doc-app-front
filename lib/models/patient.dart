@@ -4,9 +4,9 @@ class Patient {
   String startTime;
   String endTime;
   String name;
-  String patient;
-  String idno;
-  String age;
+  // String patient;
+  // String idno;
+  // String age;
   String address;
   String mobile;
   String bValue;
@@ -18,9 +18,9 @@ class Patient {
       this.startTime,
       this.endTime,
       this.name,
-      this.patient,
-      this.idno,
-      this.age,
+      // this.patient,
+      // this.idno,
+      // this.age,
       this.address,
       this.mobile,
       this.bValue,
@@ -32,9 +32,9 @@ class Patient {
         startTime: json["start"],
         endTime: json["end"],
         name: json["name"],
-        patient: json["patient"],
-        idno: json["idno"],
-        age: json["age"],
+        // patient: json["patient"],
+        // idno: json["idno"],
+        // age: json["age"],
         address: json["address"],
         mobile: json["mobile"],
         bValue: json["bValue"],

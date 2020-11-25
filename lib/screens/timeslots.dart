@@ -1,4 +1,5 @@
 import 'package:doc/models/slotTitle.dart';
+import 'package:doc/theme/colors/light_colors.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:doc/models/timeSlot.dart';
@@ -29,33 +30,21 @@ class _TimeslotsState extends State<Timeslots> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: new IconButton(
+                      icon: new Icon(Icons.arrow_back_ios, color: Colors.white,size: 35),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+        toolbarHeight: 80.0,
+          backgroundColor: LightColors.kDarkYellow,
           title: Center(
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Image.asset(
-              'assets/logo/sampleLogo.png',
-              fit: BoxFit.contain,
-              height: 32,
-            ),
-          ],
-        ),
-      )),
-
-      // ),
-      body: Column(
-        children: <Widget>[
-          // Expanded(
-          //   flex: 2,
-          //   child:
-          Container(
-            height: 80.0,
-            color: Colors.teal,
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children:<Widget> [
+                Container(
+           // height: 80.0,
+            color: LightColors.kDarkYellow,
             child: Row(
               children: <Widget>[
-                //  Container(
-                //    color: Colors.red,
-                //    child:
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,8 +58,7 @@ class _TimeslotsState extends State<Timeslots> {
                                     .toUpperCase()
                             : "",
                         style: TextStyle(
-                          fontFamily: 'Louis',
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                         ),
@@ -84,24 +72,24 @@ class _TimeslotsState extends State<Timeslots> {
                             ? infolistProvider.currentInfo.docAddress
                             : "",
                         style: TextStyle(
-                          color: Colors.teal[100],
+                          color: Colors.black,
                           fontSize: 16,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.start,
                       ),
                     ),
                   ],
                 ),
-                //  )
-                // ),
               ],
             ),
           ),
-          // ),
-          // Expanded(
-          //   flex: 2,
-          //   child:
+              ],
+            ),
+          )),
+      body: Column(
+        children: <Widget>[
+          
           Container(
             height: 70.0,
             decoration: BoxDecoration(
@@ -109,8 +97,8 @@ class _TimeslotsState extends State<Timeslots> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: <Color>[
-                  Colors.teal,
-                  Colors.teal[900],
+                  Colors.white,
+                  Colors.white,
                 ],
               ),
             ),
@@ -124,7 +112,7 @@ class _TimeslotsState extends State<Timeslots> {
                         'Set Date',
                         style: TextStyle(
                           fontFamily: 'Sansation',
-                          color: Colors.teal[200],
+                          color: Colors.black,
                           fontSize: 18,
                           fontWeight: FontWeight.w300,
                         ),
@@ -133,11 +121,12 @@ class _TimeslotsState extends State<Timeslots> {
                 Expanded(
                   flex: 3,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
                     child: RaisedButton(
                       color: Colors.teal[100],
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.0),
+                        borderRadius: BorderRadius.circular(30.0),
                       ),
                       elevation: 4.0,
                       onPressed: () {
@@ -193,7 +182,7 @@ class _TimeslotsState extends State<Timeslots> {
                                         child: Icon(
                                           Icons.event,
                                           size: 18.0,
-                                          color: Colors.teal,
+                                          color: LightColors.kGreen,
                                         ),
                                       ),
                                       Text(
@@ -235,15 +224,15 @@ class _TimeslotsState extends State<Timeslots> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: <Color>[
-                    Colors.teal[900],
-                    Colors.black,
+                    Colors.white,
+                    Colors.orange[200],
                   ],
                 ),
               ),
               child: timeSlotsProvider.isLoading
                   ? Center(
                       child: SpinKitFadingCircle(
-                        color: Colors.white,
+                        color: Colors.orange,
                       ),
                     )
                   : ListView.builder(
@@ -255,23 +244,20 @@ class _TimeslotsState extends State<Timeslots> {
                           child: Column(
                             children: [
                               Text(
-                                "Title : " + (currentSlotTitle.title).split('-')[0],
+                                "* " +
+                                    (currentSlotTitle.title).split('-')[0],
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 18),
+                                    color: Colors.black, fontSize: 18,fontWeight: FontWeight.w700),
                               ),
                               GridView.count(
-                                childAspectRatio: 2,
-                                //gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                                childAspectRatio: 3,
                                 shrinkWrap: true,
                                 crossAxisCount: 2,
-                                // itemCount: state.bestContributeCountry.length,
                                 scrollDirection: Axis.vertical,
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                // itemBuilder: (BuildContext context, int index) {
+                                    const EdgeInsets.symmetric(horizontal: 10,vertical: 20.0),
                                 children: List.generate(
                                   currentSlotTitle.slots.length,
-                                  
                                   (index) {
                                     TimeSlot currentTimeSlot =
                                         currentSlotTitle.slots.length != 0
@@ -286,10 +272,8 @@ class _TimeslotsState extends State<Timeslots> {
                                               0.5,
                                       color: Colors.transparent,
                                       child: new Column(
-                                        //crossAxisAlignment: CrossAxisAlignment.stretch,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                        // shrinkWrap: true,
                                         children: <Widget>[
                                           Row(
                                             children: [
@@ -300,10 +284,12 @@ class _TimeslotsState extends State<Timeslots> {
                                                   child: Padding(
                                                     padding: const EdgeInsets
                                                             .symmetric(
-                                                        horizontal: 5.0),
+                                                        horizontal: 5.0,
+                                                        vertical: 2.0),
                                                     child: RaisedButton(
                                                       onPressed: () {
-                                                        print(currentTimeSlot.available);
+                                                        print(currentTimeSlot
+                                                            .available);
                                                         if (currentTimeSlot
                                                                 .available !=
                                                             "0") {
@@ -315,12 +301,12 @@ class _TimeslotsState extends State<Timeslots> {
                                                                           currentTimeSlot)));
                                                         }
                                                       },
-                                                      color: Colors.teal,
+                                                      color: LightColors.kGreen,
                                                       shape:
                                                           new RoundedRectangleBorder(
                                                         borderRadius:
                                                             new BorderRadius
-                                                                .circular(5.0),
+                                                                .circular(30.0),
                                                       ),
                                                       child: Padding(
                                                         padding:
@@ -359,16 +345,16 @@ class _TimeslotsState extends State<Timeslots> {
                                                                               .available ==
                                                                           "0"
                                                                       ? "Not Available"
-                                                                      : currentTimeSlot.available +" Slot Available",
+                                                                      : currentTimeSlot
+                                                                              .available +
+                                                                          "  Available",
                                                                   style:
                                                                       TextStyle(
-                                                                    fontFamily:
-                                                                        'Louis',
                                                                     fontSize:
-                                                                        12,
+                                                                        14,
                                                                     fontWeight:
                                                                         FontWeight
-                                                                            .w600,
+                                                                            .w700,
                                                                     color: currentTimeSlot.available ==
                                                                             "0"
                                                                         ? Colors.red[

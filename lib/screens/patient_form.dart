@@ -1,5 +1,6 @@
 import 'package:doc/models/timeSlot.dart';
 import 'package:doc/providers/doctorinfo.dart';
+import 'package:doc/theme/colors/light_colors.dart';
 import 'package:provider/provider.dart';
 import '../providers/patient.dart';
 import 'package:doc/screens/receipt.dart';
@@ -31,7 +32,6 @@ class _PatientFormState extends State<PatientForm> {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
 
-  //  _formKey and _autoValidate
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
   String name;
@@ -62,7 +62,7 @@ class _PatientFormState extends State<PatientForm> {
       deviceId = await PlatformDeviceId.getDeviceId;
     } on PlatformException {
       deviceId = 'Failed to get deviceId.';
-    } 
+    }
     if (!mounted) return;
 
     setState(() {
@@ -78,73 +78,122 @@ class _PatientFormState extends State<PatientForm> {
     print("creater Date" + _now);
     return Scaffold(
       appBar: AppBar(
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back_ios, color: Colors.white, size: 35),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          toolbarHeight: 80.0,
+          backgroundColor: LightColors.kDarkYellow,
           title: Center(
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Image.asset(
-              'assets/logo/sampleLogo.png',
-              fit: BoxFit.contain,
-              height: 32,
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Container(
+                  // height: 120.0,
+                  color: LightColors.kDarkYellow,
+                  child: Row(
+                    children: <Widget>[
+                      //  Container(
+                      //    color: Colors.red,
+                      //    child:
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: Text(
+                              infolistProvider.currentInfo != null
+                                  ? 'Dr : ' +
+                                      infolistProvider.currentInfo.docName
+                                          .toUpperCase()
+                                  : "",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(17.0, 5.0, 0, 0),
+                            child: Text(
+                              infolistProvider.currentInfo != null
+                                  ? infolistProvider.currentInfo.docAddress
+                                  : "",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                        ],
+                      ),
+                      //  )
+                      // ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      )),
+          )),
       body: Column(
         children: <Widget>[
           // Expanded(
           //   flex: 2,
           // child:
-          Container(
-            height: 80.0,
-            color: Colors.teal,
-            child: Row(
-              children: <Widget>[
-                //  Container(
-                //    color: Colors.red,
-                //    child:
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text(
-                        infolistProvider.currentInfo != null
-                            ? 'Dr : ' +
-                                infolistProvider.currentInfo.docName
-                                    .toUpperCase()
-                            : "",
-                        style: TextStyle(
-                          fontFamily: 'Louis',
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(17.0, 5.0, 0, 0),
-                      child: Text(
-                        infolistProvider.currentInfo != null
-                            ? infolistProvider.currentInfo.docAddress
-                            : "",
-                        style: TextStyle(
-                          color: Colors.teal[100],
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        textAlign: TextAlign.start,
-                      ),
-                    ),
-                  ],
-                ),
-                //  )
-                // ),
-              ],
-            ),
-          ),
+          // Container(
+          //   height: 80.0,
+          //   color: LightColors.kDarkYellow,
+          //   child: Row(
+          //     children: <Widget>[
+          //       //  Container(
+          //       //    color: Colors.red,
+          //       //    child:
+          //       Column(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: <Widget>[
+          //           Padding(
+          //             padding: const EdgeInsets.fromLTRB(150.0, 0.0, 0, 0),
+          //             child: Text(
+          //               infolistProvider.currentInfo != null
+          //                   ? 'Dr : ' +
+          //                       infolistProvider.currentInfo.docName
+          //                           .toUpperCase()
+          //                   : "",
+          //               style: TextStyle(
+          //                 color: Colors.black,
+          //                 fontSize: 20,
+          //                 fontWeight: FontWeight.w800,
+          //               ),
+          //               textAlign: TextAlign.center,
+          //             ),
+          //           ),
+          //           Padding(
+          //             padding: const EdgeInsets.fromLTRB(140.0, 5.0, 0, 0),
+          //             child: Text(
+          //               infolistProvider.currentInfo != null
+          //                   ? infolistProvider.currentInfo.docAddress
+          //                   : "",
+          //               style: TextStyle(
+          //                 color: Colors.black,
+          //                 fontSize: 16,
+          //                 fontWeight: FontWeight.w500,
+          //               ),
+          //               textAlign: TextAlign.start,
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //       //  )
+          //       // ),
+          //     ],
+          //   ),
+          // ),
           // ),
           Container(
             height: 70.0,
@@ -153,8 +202,8 @@ class _PatientFormState extends State<PatientForm> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: <Color>[
-                  Colors.teal,
-                  Colors.teal[900],
+                  Colors.white,
+                  Colors.white,
                 ],
               ),
             ),
@@ -165,7 +214,9 @@ class _PatientFormState extends State<PatientForm> {
                     margin: const EdgeInsets.fromLTRB(17.0, 0, 8.0, 0),
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.teal[200])),
+                        borderRadius: new BorderRadius.circular(30.0),
+                        color: LightColors.kLightYellow2,
+                        border: Border.all(color: Colors.white24)),
                     child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -173,18 +224,16 @@ class _PatientFormState extends State<PatientForm> {
                           Text(
                             'Date : ',
                             style: TextStyle(
-                              fontFamily: 'Sansation',
-                              color: Colors.teal[200],
-                              fontSize: 15,
-                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                           Text(
                             '${widget.timeSlot.date}', //set date
                             style: TextStyle(
-                              fontFamily: 'Sansation',
-                              color: Colors.teal[100],
-                              fontSize: 17,
+                              color: Colors.grey,
+                              fontSize: 18,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -197,7 +246,9 @@ class _PatientFormState extends State<PatientForm> {
                     margin: const EdgeInsets.fromLTRB(8.0, 0, 17.0, 0),
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.teal[200])),
+                        borderRadius: new BorderRadius.circular(30.0),
+                        color: LightColors.kLightYellow2,
+                        border: Border.all(color: Colors.white24)),
                     child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -205,18 +256,16 @@ class _PatientFormState extends State<PatientForm> {
                           Text(
                             'Time : ',
                             style: TextStyle(
-                              fontFamily: 'Sansation',
-                              color: Colors.teal[200],
-                              fontSize: 15,
-                              fontWeight: FontWeight.w300,
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                           Text(
                             '${formated.format(DateTime.parse(widget.timeSlot.date + 'T' + widget.timeSlot.startTime + '+00:00').toLocal())}',
                             //'${widget.timeSlot.startTime}', //set time
                             style: TextStyle(
-                              fontFamily: 'Sansation',
-                              color: Colors.teal[100],
+                              color: Colors.grey,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                             ),
@@ -238,8 +287,8 @@ class _PatientFormState extends State<PatientForm> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: <Color>[
-                        Colors.teal[900],
-                        Colors.black,
+                        Colors.white,
+                        Colors.orange[200],
                       ],
                     ),
                   ),
@@ -247,18 +296,18 @@ class _PatientFormState extends State<PatientForm> {
                     scrollDirection: Axis.vertical,
                     child: Column(children: <Widget>[
                       Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Text(
-                              'Please complete the form below',
-                              style: TextStyle(
-                                  color: Colors.red[400],
-                                  fontFamily: 'Louis',
-                                  fontSize: 17.0,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          )),
+                        alignment: Alignment.centerLeft,
+                        // child: Padding(
+                        //   padding: const EdgeInsets.all(15.0),
+                        //   child: Text(
+                        //     'Please complete the form below',
+                        //     style: TextStyle(
+                        //         color: Colors.red[600],
+                        //         fontSize: 17.0,
+                        //         fontWeight: FontWeight.w600),
+                        //   ),
+                        // )
+                      ),
                       Container(
                           width: 350,
                           child: Form(
@@ -283,14 +332,14 @@ class _PatientFormState extends State<PatientForm> {
         Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 15.0, horizontal: 1.0),
               child: Text(
                 'Who make the reservation?'.toUpperCase(),
                 style: TextStyle(
-                  fontFamily: 'Sansation',
-                  color: Colors.teal[200],
-                  fontSize: 10,
-                  fontWeight: FontWeight.w300,
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             )),
@@ -298,20 +347,20 @@ class _PatientFormState extends State<PatientForm> {
           controller: nameController,
           autofocus: true,
           style: new TextStyle(
-            color: Colors.white,
-            fontFamily: 'Sansation',
+            color: Colors.black,
           ),
           decoration: const InputDecoration(
             labelText: 'Name',
             labelStyle: TextStyle(
-              color: Color(0xFFE0F2F1), //Colors.teal[200]
-            ),
+                color: Colors.grey,
+                fontSize: 20,
+                fontWeight: FontWeight.w500 //Colors.teal[200]
+                ),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.teal)),
             focusedBorder: UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
-            ),
+                borderSide: BorderSide(color: Colors.black) //Colors.teal[200]
+                ),
           ),
           keyboardType: TextInputType.text,
           validator: validateName,
@@ -324,102 +373,103 @@ class _PatientFormState extends State<PatientForm> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 15.0),
               child: Text(
-                'Please enter patient details below.'.toUpperCase(),
+                'Please enter your details below.'.toUpperCase(),
                 style: TextStyle(
-                  fontFamily: 'Sansation',
-                  color: Colors.teal[200],
-                  fontSize: 10,
-                  fontWeight: FontWeight.w300,
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             )),
-        new TextFormField(
-          controller: patientController,
-          autofocus: true,
-          style: new TextStyle(
-            color: Colors.white,
-            fontFamily: 'Sansation',
-          ),
-          decoration: const InputDecoration(
-            labelText: 'Patient Name',
-            labelStyle: TextStyle(
-              color: Color(0xFFE0F2F1), //Colors.teal[200]
-            ),
-            enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.teal)),
-            focusedBorder: UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
-            ),
-          ),
-          keyboardType: TextInputType.text,
-          validator: validatepatientName,
-          onSaved: (String value) {
-            _formData['Patient Name'] = value;
-          },
-        ),
-        new TextFormField(
-          controller: idController,
-          autofocus: true,
-          style: new TextStyle(
-            color: Colors.white,
-            fontFamily: 'Sansation',
-          ),
-          decoration: const InputDecoration(
-            labelText: 'ID Number',
-            labelStyle: TextStyle(
-              color: Color(0xFFE0F2F1), //Colors.teal[200]
-            ),
-            enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.teal)),
-            focusedBorder: UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
-            ),
-          ),
-          keyboardType: TextInputType.text,
-          validator: validateIDnumber,
-          onSaved: (String value) {
-            _formData['IDNumber'] = value;
-          },
-        ),
-        new TextFormField(
-          controller: ageController,
-          autofocus: true,
-          style: new TextStyle(
-            color: Colors.white,
-            fontFamily: 'Sansation',
-          ),
-          decoration: const InputDecoration(
-            labelText: 'Age',
-            labelStyle: TextStyle(
-              color: Color(0xFFE0F2F1), //Colors.teal[200]
-            ),
-            enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.teal)),
-            focusedBorder: UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
-            ),
-          ),
-          keyboardType: TextInputType.text,
-          validator: validateAge,
-          onSaved: (String value) {
-            _formData['Age'] = value;
-          },
-        ),
+        // new TextFormField(
+        //   controller: patientController,
+        //   autofocus: true,
+        //   style: new TextStyle(
+        //     color: Colors.grey,
+        //     fontFamily: 'Sansation',
+        //   ),
+        //   decoration: const InputDecoration(
+        //     labelText: 'Patient Name',
+        //     labelStyle: TextStyle(
+        //       color: Colors.black, //Colors.teal[200]
+        //     ),
+        //     enabledBorder: UnderlineInputBorder(
+        //         borderSide: BorderSide(color: Colors.teal)),
+        //     focusedBorder: UnderlineInputBorder(
+        //       borderSide:
+        //           BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
+        //     ),
+        //   ),
+        //   keyboardType: TextInputType.text,
+        //   validator: validatepatientName,
+        //   onSaved: (String value) {
+        //     _formData['Patient Name'] = value;
+        //   },
+        // ),
+        // new TextFormField(
+        //   controller: idController,
+        //   autofocus: true,
+        //   style: new TextStyle(
+        //     color: Colors.grey,
+        //     fontFamily: 'Sansation',
+        //   ),
+        //   decoration: const InputDecoration(
+        //     labelText: 'ID Number',
+        //     labelStyle: TextStyle(
+        //       color: Colors.black, //Colors.teal[200]
+        //     ),
+        //     enabledBorder: UnderlineInputBorder(
+        //         borderSide: BorderSide(color: Colors.teal)),
+        //     focusedBorder: UnderlineInputBorder(
+        //       borderSide:
+        //           BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
+        //     ),
+        //   ),
+        //   keyboardType: TextInputType.text,
+        //   validator: validateIDnumber,
+        //   onSaved: (String value) {
+        //     _formData['IDNumber'] = value;
+        //   },
+        // ),
+        // new TextFormField(
+        //   controller: ageController,
+        //   autofocus: true,
+        //   style: new TextStyle(
+        //     color: Colors.grey,
+        //     fontFamily: 'Sansation',
+        //   ),
+        //   decoration: const InputDecoration(
+        //     labelText: 'Age',
+        //     labelStyle: TextStyle(
+        //       color: Colors.black,
+        //     ),
+        //     enabledBorder: UnderlineInputBorder(
+        //         borderSide: BorderSide(color: Colors.teal)),
+        //     focusedBorder: UnderlineInputBorder(
+        //       borderSide:
+        //           BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
+        //     ),
+        //   ),
+        //   keyboardType: TextInputType.text,
+        //   validator: validateAge,
+        //   onSaved: (String value) {
+        //     _formData['Age'] = value;
+        //   },
+        // ),
         new TextFormField(
           controller: addressController,
           autofocus: true,
           style: new TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontFamily: 'Sansation',
           ),
           decoration: const InputDecoration(
             labelText: 'Address',
             labelStyle: TextStyle(
-              color: Color(0xFFE0F2F1), //Colors.teal[200]
-            ),
+                color: Colors.grey,
+                fontSize: 20,
+                fontWeight: FontWeight.w500 //Colors.teal[200]
+                ),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.teal)),
             focusedBorder: UnderlineInputBorder(
@@ -437,14 +487,16 @@ class _PatientFormState extends State<PatientForm> {
           controller: mobileController,
           autofocus: true,
           style: new TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontFamily: 'Sansation',
           ),
           decoration: const InputDecoration(
             labelText: 'Mobile',
             labelStyle: TextStyle(
-              color: Color(0xFFE0F2F1), //Colors.teal[200]
-            ),
+                color: Colors.grey,
+                fontSize: 20,
+                fontWeight: FontWeight.w500 //Colors.teal[200]
+                ),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.teal)),
             focusedBorder: UnderlineInputBorder(
@@ -481,11 +533,11 @@ class _PatientFormState extends State<PatientForm> {
                   'endTime':
                       '${widget.timeSlot.date}T${formated.format(DateTime.parse(widget.timeSlot.date + 'T' + widget.timeSlot.endTime + '+00:00').toLocal())}:00',
                   //'${widget.timeSlot.date}T${widget.timeSlot.endTime}:00',
-                  'fullTitle':'${widget.timeSlot.fullTitle}',
+                  'fullTitle': '${widget.timeSlot.fullTitle}',
                   'name': nameController.text,
-                  'patientName': patientController.text,
-                  'idno': idController.text,
-                  'age': ageController.text,
+                  //'patientName': patientController.text,
+                  //'idno': idController.text,
+                  //'age': ageController.text,
                   'address': addressController.text,
                   'mobile': mobileController.text,
                   'doctorname': infolistProvider.currentInfo.docName,
@@ -513,21 +565,32 @@ class _PatientFormState extends State<PatientForm> {
             },
             color: isEnabled == true ? Colors.teal[700] : Colors.teal[100],
             shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(5.0),
+              borderRadius: new BorderRadius.circular(30.0),
             ),
             child: Padding(
               padding: EdgeInsets.all(8),
               child: Container(
-                width: 80,
+                width: 95,
                 child: Center(
-                  child: Text(
-                    'Confirm',
-                    style: TextStyle(
-                      fontFamily: 'Louis',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      // Expanded(
+                      Text(
+                        'Conferm',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700, //
+                          color: Colors.white,
+                        ),
+                      ),
+                      // Icon(
+                      //   Icons.navigate_next,
+                      //   color: Colors.white,
+                      //   //size: 22,
+                      // )
+                    ],
                   ),
                 ),
               ),
