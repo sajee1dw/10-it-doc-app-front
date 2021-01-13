@@ -1,4 +1,5 @@
 import 'package:doc/Widgets/top_container.dart';
+import 'package:doc/models/cacheData.dart';
 import 'package:doc/theme/colors/light_colors.dart';
 import 'package:flutter/material.dart';
 import "package:doc/models/company.dart";
@@ -14,20 +15,41 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 //import 'package:doc/widgets/top_container.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:simple_vcard_parser/simple_vcard_parser.dart';
 
 class SelectionPage extends StatefulWidget {
   @override
   _ListPageState createState() => _ListPageState();
 }
 
+String qrData = "No data found!";
+var data;
+bool hasdata = false;
+
 class _ListPageState extends State<SelectionPage> {
   String cacheDocArea, cacheDocSuburb, cacheBValue;
-  List lessons;
+  List<Company> lessons = <Company>[];
   String _identifier = 'Unknown';
   @override
   void initState() {
-    lessons = getCompanies();
+    getCompanies().then((List<Company> val) {
+      lessons = val;
+      print('company id');
+      print(val[0].id);
+      print(lessons);
+      // setState(() async{
+      // lessons = await getCompanies();
+      // });
+    }).catchError((error) {
+      print(error);
+    });
+
     super.initState();
+
     initPlatformState();
   }
 
@@ -62,7 +84,8 @@ class _ListPageState extends State<SelectionPage> {
     final TimeSlotProvider timeSlotsProvider =
         Provider.of<TimeSlotProvider>(context, listen: true);
     double width = MediaQuery.of(context).size.width;
-    double height =MediaQuery.of(context).size.height;
+    double height = MediaQuery.of(context).size.height;
+
     ListTile makeListTile(Company company) => ListTile(
           contentPadding:
               EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -72,7 +95,7 @@ class _ListPageState extends State<SelectionPage> {
               // backgroundColor: Color(0xffFDCF09),
               child: CircleAvatar(
                 radius: 55,
-                backgroundImage: AssetImage('assets/logo/sampleLogo.png'),
+                backgroundImage: NetworkImage(company.logo),
               ),
             ),
           ),
@@ -137,7 +160,7 @@ class _ListPageState extends State<SelectionPage> {
         child: ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          itemCount: lessons.length,
+          itemCount: lessons != null ? lessons.length : 0,
           itemBuilder: (BuildContext context, int index) {
             return makeCard(lessons[index]);
           },
@@ -199,6 +222,74 @@ class _ListPageState extends State<SelectionPage> {
             ],
           ),
         ),
+      );
+    }
+
+    Widget alertMassage() {
+      VCard vc = VCard(qrData);
+      var companyWid = vc.organisation;
+      Widget okButton = FlatButton(
+        child: Text("OK"),
+        onPressed: hasdata
+            ? () async {
+                final InfolistProvider infolistProvider =
+                    Provider.of<InfolistProvider>(context, listen: false);
+                // if (await canLaunch(qrData)) {
+                // VCard vc = VCard(qrData);
+                // print(vc.organisation);
+
+                var id = companyWid.split('-')[1];
+                // var launchAddress = qrData.split('-')[0];
+                // print(qrData);
+                // print(launchAddress);
+                //  await launch(launchAddress);
+
+                final Map<String, dynamic> _infoData = {
+                  'userId': id,
+                };
+
+                final Map<String, dynamic> successInfo =
+                    await infolistProvider.getInfo(_infoData);
+                if (successInfo['success']) {
+                  timeSlotsProvider.getTimeSlots({
+                    'appointmentcalendar':
+                        infolistProvider.currentInfo.appointmentcalendar,
+                    'bookingcalendar':
+                        infolistProvider.currentInfo.bookingcalendar
+                  });
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SelectionPage()));
+                }
+                // } else {
+                //   throw 'Could not launch ';
+                // }
+              }
+            : null,
+      );
+      Widget canclebButton = FlatButton(
+          child: Text("CANCLE"),
+          onPressed: () async {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SelectionPage()));
+          });
+      var name = companyWid.split('-')[0];
+      AlertDialog alert = AlertDialog(
+        title: Text("${(name)}"),
+        content: Text(
+          "Add ${(name)} to the Booking List.. ",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20),
+        ),
+        actions: [
+          canclebButton,
+          okButton,
+        ],
+      );
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
       );
     }
 
@@ -313,7 +404,22 @@ class _ListPageState extends State<SelectionPage> {
           Icons.add,
           size: 45,
         ),
-        onPressed: () {},
+        onPressed: () async {
+          var options = ScanOptions();
+          var data = await BarcodeScanner.scan(options: options);
+          setState(() {
+            qrData = data.rawContent;
+            hasdata = true;
+          });
+          //  // if (await canLaunch(qrData)) {
+          //     alertMassage();
+          //  // }
+          print(qrData);
+          print(qrData.isNotEmpty);
+          if (qrData.isNotEmpty == true) {
+            alertMassage();
+          }
+        },
       ),
     );
   }
@@ -323,14 +429,52 @@ class _ListPageState extends State<SelectionPage> {
     prefs.setString('identifier', _identifier);
     print(_identifier);
   }
-}
 
-List getCompanies() {
-  return [
-    Company(
-        name: "AutoMax Service",
-        address: "Kalutara North",
-        id: "3k0n6tMxJf6Rw8izDiZi",
-        logo: "auotmax.png")
-  ];
+  // List<String> _getList() {
+  //   SharedPreferences prefs;
+  //   var yourList = prefs.getStringList("key");
+  //   print(yourList);
+  // }
+
+  Future<List<Company>> getCompanies() async {
+    var gatCompaniesFromCache = await getData();
+    print(gatCompaniesFromCache);
+    print("****");
+    List<Company> list = <Company>[];
+    gatCompaniesFromCache.forEach((element) {
+      list.add(new Company(
+          name: element['name'],
+          address: element['address'],
+          id: element['id'], //BvarFwPaBYtAuZTnkGMN,//3k0n6tMxJf6Rw8izDiZi
+          logo: element['logo']));
+    });
+    print(list);
+    return list;
+  }
+
+  getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<Map> getObjectList(String key) {
+      if (prefs == null) return null;
+      List<String> dataList = prefs.getStringList(key);
+      return dataList?.map((value) {
+        Map _dataMap = json.decode(value);
+        return _dataMap;
+      })?.toList();
+    }
+
+    List<Map> getObjList<T>(String key, T f(Map v),
+        {List<T> defValue = const []}) {
+      if (prefs == null) return null;
+      List<Map> dataList = getObjectList(key);
+      List<Map> list = dataList;
+      return list ?? defValue;
+    }
+
+    var cacheData =
+        getObjList<CustomModel>("data", (v) => CustomModel.fromJson(v));
+    // print(cacheData);
+    return cacheData;
+  }
 }

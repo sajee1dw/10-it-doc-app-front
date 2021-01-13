@@ -18,7 +18,6 @@ class TimeSlotProvider with ChangeNotifier {
       isLoading = true;
       notifyListeners();
       final http.Response response = await HttpService.getTimeSlots(date);
-
       final List<dynamic> responseData = json.decode(response.body);
       print("Time Slot" + response.body);
       if (response.statusCode == 200) {

@@ -578,7 +578,7 @@ class _PatientFormState extends State<PatientForm> {
                     children: <Widget>[
                       // Expanded(
                       Text(
-                        'Conferm',
+                        'confirm',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700, //

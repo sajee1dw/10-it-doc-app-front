@@ -19,7 +19,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final ArealistProvider status = ArealistProvider();
+ // final ArealistProvider status = ArealistProvider();
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
