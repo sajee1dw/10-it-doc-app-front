@@ -104,7 +104,7 @@ class _PatientFormState extends State<PatientForm> {
                             padding: const EdgeInsets.only(left: 15.0),
                             child: Text(
                               infolistProvider.currentInfo != null
-                                  ? 'Dr : ' +
+                                  ? 
                                       infolistProvider.currentInfo.docName
                                           .toUpperCase()
                                   : "",

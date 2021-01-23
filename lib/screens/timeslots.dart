@@ -53,7 +53,7 @@ class _TimeslotsState extends State<Timeslots> {
                       padding: const EdgeInsets.only(left: 15.0),
                       child: Text(
                         infolistProvider.currentInfo != null
-                            ? 'Dr : ' +
+                            ? 
                                 infolistProvider.currentInfo.docName
                                     .toUpperCase()
                             : "",

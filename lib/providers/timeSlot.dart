@@ -34,7 +34,7 @@ class TimeSlotProvider with ChangeNotifier {
       }
     } catch (e) {
       throw Exception(e.toString());
-      return {'success': false, 'error': "something went wrong"};
+     // return {'success': false, 'error': "something went wrong"};
     }
   }
 }

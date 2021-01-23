@@ -132,7 +132,8 @@ class _ListPageState extends State<SelectionPage> {
             };
             final Map<String, dynamic> successInfo =
                 await infolistProvider.getInfo(_infoData);
-
+            print(infolistProvider.currentInfo.appointmentcalendar);
+            print(infolistProvider.currentInfo.bookingcalendar);
             if (successInfo['success']) {
               timeSlotsProvider.getTimeSlots({
                 'appointmentcalendar':
@@ -237,20 +238,22 @@ class _ListPageState extends State<SelectionPage> {
                 // if (await canLaunch(qrData)) {
                 // VCard vc = VCard(qrData);
                 // print(vc.organisation);
-
-                var id = companyWid.split('-')[1];
+                var companyID = companyWid.split('-')[1];
+                print(companyWid);
+                print(vc.name);
+                // var id = companyWid;
                 // var launchAddress = qrData.split('-')[0];
                 // print(qrData);
                 // print(launchAddress);
                 //  await launch(launchAddress);
 
-                final Map<String, dynamic> _infoData = {
-                  'userId': id,
-                };
+                final Map<String, dynamic> _infoData = {'userId': companyID};
 
                 final Map<String, dynamic> successInfo =
                     await infolistProvider.getInfo(_infoData);
                 if (successInfo['success']) {
+                  print(infolistProvider.currentInfo.appointmentcalendar);
+                  print(infolistProvider.currentInfo.bookingcalendar);
                   timeSlotsProvider.getTimeSlots({
                     'appointmentcalendar':
                         infolistProvider.currentInfo.appointmentcalendar,
