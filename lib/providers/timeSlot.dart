@@ -1,5 +1,5 @@
-import 'package:doc/_services/_httpService.dart';
-import 'package:doc/models/slotTitle.dart';
+import 'package:bookme/_services/_httpService.dart';
+import 'package:bookme/models/slotTitle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -7,6 +7,7 @@ import 'dart:async';
 
 class TimeSlotProvider with ChangeNotifier {
   bool isLoading = false;
+  bool hasEvents = true;
   List<SlotTitle> slotTitles = [];
 
   Future<Map<String, dynamic>> getTimeSlots(
@@ -19,8 +20,9 @@ class TimeSlotProvider with ChangeNotifier {
       notifyListeners();
       final http.Response response = await HttpService.getTimeSlots(date);
       final List<dynamic> responseData = json.decode(response.body);
-      print("Time Slot" + response.body);
-      if (response.statusCode == 200) {
+      print(responseData);
+     
+      if (response.statusCode == 200 ) {
         List<SlotTitle> allTitles =
             responseData.map((title) => SlotTitle.fromJson(title)).toList();
         slotTitles = allTitles;
@@ -34,7 +36,7 @@ class TimeSlotProvider with ChangeNotifier {
       }
     } catch (e) {
       throw Exception(e.toString());
-     // return {'success': false, 'error': "something went wrong"};
+      // return {'success': false, 'error': "something went wrong"};
     }
   }
 }

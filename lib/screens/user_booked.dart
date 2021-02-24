@@ -1,7 +1,7 @@
-import 'package:doc/models/userData.dart';
-import 'package:doc/providers/userData.dart';
-import 'package:doc/screens/booked_data.dart';
-import 'package:doc/theme/colors/light_colors.dart';
+import 'package:bookme/models/userData.dart';
+import 'package:bookme/providers/userData.dart';
+import 'package:bookme/screens/booked_data.dart';
+import 'package:bookme/theme/colors/light_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -25,42 +25,44 @@ class _UserBookingState extends State<UserBooking> {
   Widget build(BuildContext context) {
     final UserDataProvider userDataProvider =
         Provider.of<UserDataProvider>(context, listen: true);
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    double size = MediaQuery.of(context).size.width;
     print(cacheIdentifier);
     return Scaffold(
       appBar: AppBar(
-        leading: new IconButton(
-            icon: new Icon(Icons.arrow_back_ios, color: Colors.white, size: 35),
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back_ios,
+                color: Colors.white, size: size * 0.05),
             onPressed: () => Navigator.of(context).pop(),
           ),
           backgroundColor: LightColors.kDarkYellow,
           title: Center(
-            
             child: new Row(
-              
               mainAxisAlignment: MainAxisAlignment.end,
-              children:<Widget> [
+              children: <Widget>[
                 Padding(
-                      padding: const EdgeInsets.fromLTRB(15.0, 7.0, 3, 0),
-                      child: Text(
-                        'Your Bookings.!',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                  padding: EdgeInsets.fromLTRB(
+                      width * 0.0150, height * 0.0070, width * 0.003, 0),
+                  child: Text(
+                    'Your Bookings.!',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: size * 0.06,
+                      fontWeight: FontWeight.w700,
                     ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ],
             ),
-          )
-          ),
+          )),
 
       // ),
       body: Column(
         children: <Widget>[
           Container(
-            height: 60.0,
+            height: height * 0.100,
             color: Colors.white,
             child: Row(
               children: <Widget>[
@@ -68,20 +70,9 @@ class _UserBookingState extends State<UserBooking> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    // Padding(
-                    //   padding: const EdgeInsets.fromLTRB(15.0, 7.0, 3, 0),
-                    //   child: Text(
-                    //     'Your Bookings.!',
-                    //     style: TextStyle(
-                    //       color: Colors.black,
-                    //       fontSize: 22,
-                    //       fontWeight: FontWeight.w700,
-                    //     ),
-                    //     textAlign: TextAlign.center,
-                    //   ),
-                    // ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(280.0, 0.0, 10, 0),
+                      padding: EdgeInsets.fromLTRB(
+                          width * 0.6500, height * 0.0020, 0.0, 0),
                       child: FlatButton(
                         color: LightColors.kGreen,
                         textColor: Colors.white,
@@ -98,38 +89,25 @@ class _UserBookingState extends State<UserBooking> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            // Expanded(
                             Text(
                               'Clear',
                               style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700, //
+                                fontSize: size * 0.04,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.white,
                               ),
                             ),
-                            // Icon(
-                            //   Icons.navigate_next,
-                            //   color: Colors.white,
-                            //   //size: 22,
-                            // )
                           ],
                         ),
                       ),
                     ),
                   ],
                 ),
-                // )
-                // ),
               ],
             ),
           ),
-          // ),
-          // Expanded(
-          //   flex: 2,
-          //   child:
-
           Expanded(
-            flex: 12,
+            flex: 20,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -145,11 +123,11 @@ class _UserBookingState extends State<UserBooking> {
                       ),
                     )
                   : GridView.count(
-                      childAspectRatio: 4,
+                      childAspectRatio: 2.5,
                       shrinkWrap: true,
                       crossAxisCount: 1,
                       scrollDirection: Axis.vertical,
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      padding: EdgeInsets.symmetric(horizontal: width * 0.04),
                       children: List.generate(userDataProvider.userData.length,
                           (index) {
                         UserData currentUserData =
@@ -157,22 +135,20 @@ class _UserBookingState extends State<UserBooking> {
                                 ? userDataProvider.userData[index]
                                 : [];
                         return Container(
-                          height: MediaQuery.of(context).size.height * 0.8,
+                          height: height * 2,
                           color: Colors.transparent,
                           child: new Column(
-                            //crossAxisAlignment: CrossAxisAlignment.stretch,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            // shrinkWrap: true,
                             children: <Widget>[
                               Row(
                                 children: [
                                   Expanded(
                                     flex: 5,
                                     child: Container(
-                                      height: 80.0,
+                                      height: height * 0.1400, //box height
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 5.0),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: width * 0.0350),
                                         child: RaisedButton(
                                           onPressed: () {
                                             if (currentUserData.bValue != 1) {
@@ -187,12 +163,12 @@ class _UserBookingState extends State<UserBooking> {
                                           color: LightColors.kLightYellow2,
                                           shape: new RoundedRectangleBorder(
                                             borderRadius:
-                                                new BorderRadius.circular(40.0),
+                                                new BorderRadius.circular(30.0),
                                           ),
                                           child: Padding(
                                             padding: EdgeInsets.all(0),
                                             child: Container(
-                                              width: 180,
+                                              width: width * 0.250,
                                               child: Center(
                                                   child: Column(
                                                       mainAxisAlignment:
@@ -202,19 +178,19 @@ class _UserBookingState extends State<UserBooking> {
                                                     Text(
                                                       "Name -: " +
                                                           currentUserData
-                                                              .doctorName +
+                                                              .clientName +
                                                           "               " +
                                                           "Date -: " +
                                                           (currentUserData
                                                                   .endTime)
-                                                              .split("T")[0] +
+                                                              .split(" ")[0] +
                                                           "               " +
                                                           "Time -: " +
                                                           (currentUserData
                                                                   .startTime)
-                                                              .split("T")[1],
+                                                              .split(" ")[1],
                                                       style: TextStyle(
-                                                        fontSize: 16,
+                                                        fontSize: size * 0.025,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: Colors.black,
@@ -233,8 +209,6 @@ class _UserBookingState extends State<UserBooking> {
                           ),
                         );
                       }),
-
-                      // }
                     ),
             ),
           ),

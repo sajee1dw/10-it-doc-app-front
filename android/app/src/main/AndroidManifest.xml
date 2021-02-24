@@ -8,7 +8,7 @@
          <uses-permission android:name="android.permission.INTERNET" /> <!-- THIS LINE WAS ADDED --><uses-permission android:name="android.permission.INTERNET" /> <!-- THIS LINE WAS ADDED -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="doc"
+        android:label="BookMe"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

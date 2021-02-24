@@ -1,25 +1,25 @@
-import 'package:doc/Widgets/top_container.dart';
-import 'package:doc/models/cacheData.dart';
-import 'package:doc/theme/colors/light_colors.dart';
+import 'package:bookme/Widgets/top_container.dart';
+import 'package:bookme/models/cacheData.dart';
+import 'package:bookme/screens/aboutUs.dart';
+import 'package:bookme/theme/colors/light_colors.dart';
 import 'package:flutter/material.dart';
-import "package:doc/models/company.dart";
+import "package:bookme/models/company.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:doc/providers/timeSlot.dart';
-import 'package:doc/providers/userData.dart';
-import 'package:doc/screens/timeslots.dart';
-import 'package:doc/screens/user_booked.dart';
-import 'package:doc/providers/doctorinfo.dart';
+import 'package:bookme/providers/timeSlot.dart';
+import 'package:bookme/providers/userData.dart';
+import 'package:bookme/screens/timeslots.dart';
+import 'package:bookme/screens/user_booked.dart';
+import 'package:bookme/providers/doctorinfo.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:platform_device_id/platform_device_id.dart';
-//import 'package:doc/widgets/top_container.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:barcode_scan/barcode_scan.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:simple_vcard_parser/simple_vcard_parser.dart';
+
+//import 'package:url_launcher/url_launcher.dart';// URL launcher <-
 
 class SelectionPage extends StatefulWidget {
   @override
@@ -29,6 +29,7 @@ class SelectionPage extends StatefulWidget {
 String qrData = "No data found!";
 var data;
 bool hasdata = false;
+bool isEnabled = true;
 
 class _ListPageState extends State<SelectionPage> {
   String cacheDocArea, cacheDocSuburb, cacheBValue;
@@ -41,9 +42,9 @@ class _ListPageState extends State<SelectionPage> {
       print('company id');
       print(val[0].id);
       print(lessons);
-      // setState(() async{
-      // lessons = await getCompanies();
-      // });
+      setState(() {
+        isEnabled = true;
+      });
     }).catchError((error) {
       print(error);
     });
@@ -85,14 +86,15 @@ class _ListPageState extends State<SelectionPage> {
         Provider.of<TimeSlotProvider>(context, listen: true);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    double size = MediaQuery.of(context).size.height;
 
     ListTile makeListTile(Company company) => ListTile(
+      
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+               EdgeInsets.symmetric(horizontal: width*0.0100, vertical: height*0.0100),
           leading: Container(
             child: CircleAvatar(
               radius: 40,
-              // backgroundColor: Color(0xffFDCF09),
               child: CircleAvatar(
                 radius: 55,
                 backgroundImage: NetworkImage(company.logo),
@@ -102,8 +104,8 @@ class _ListPageState extends State<SelectionPage> {
           title: Text(
             company.name,
             style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.w700,
+              fontSize: size * 0.0300,
+              fontWeight: FontWeight.w600,
             ),
           ),
           subtitle: Row(
@@ -112,9 +114,9 @@ class _ListPageState extends State<SelectionPage> {
                   flex: 4,
                   child: Container(
                     child: Text(
-                      company.address,
+                      company.shortAddress,
                       style: TextStyle(
-                          fontSize: 16.0,
+                          fontSize: size * 0.0160,
                           fontWeight: FontWeight.w400,
                           color: Colors.black45),
                     ),
@@ -124,36 +126,49 @@ class _ListPageState extends State<SelectionPage> {
           trailing:
               Icon(Icons.keyboard_arrow_right, color: Colors.black, size: 40.0),
           onTap: () async {
-            final InfolistProvider infolistProvider =
-                Provider.of<InfolistProvider>(context, listen: false);
-
-            final Map<String, dynamic> _infoData = {
-              'userId': '${company.id}',
-            };
-            final Map<String, dynamic> successInfo =
-                await infolistProvider.getInfo(_infoData);
-            print(infolistProvider.currentInfo.appointmentcalendar);
-            print(infolistProvider.currentInfo.bookingcalendar);
-            if (successInfo['success']) {
-              timeSlotsProvider.getTimeSlots({
-                'appointmentcalendar':
-                    infolistProvider.currentInfo.appointmentcalendar,
-                'bookingcalendar': infolistProvider.currentInfo.bookingcalendar
+            if (isEnabled == true) {
+              setState(() {
+                isEnabled = false;
               });
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Timeslots()));
-            } else {
-              print("something went wrong");
+              print(isEnabled);
+              final InfolistProvider infolistProvider =
+                  Provider.of<InfolistProvider>(context, listen: false);
+
+              final Map<String, dynamic> _infoData = {
+                'userId': '${company.id}',
+              };
+              final Map<String, dynamic> successInfo =
+                  await infolistProvider.getInfo(_infoData);
+              print(infolistProvider.currentInfo.appointmentcalendar);
+              print(infolistProvider.currentInfo.bookingcalendar);
+              if (successInfo['success']) {
+                timeSlotsProvider.getTimeSlots({
+                  'appointmentcalendar':
+                      infolistProvider.currentInfo.appointmentcalendar,
+                  'bookingcalendar':
+                      infolistProvider.currentInfo.bookingcalendar
+                });
+
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Timeslots()));
+                setState(() {
+                  isEnabled = true;
+                });
+              } else {
+                print("something went wrong");
+              }
             }
           },
         );
 
     Card makeCard(Company company) => Card(
-          elevation: 8.0,
-          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          elevation: 10.0,
+          
+          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           child: Container(
-            //decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
             child: makeListTile(company),
+            // height: 80.0,  //card height change
+            // width:20.0
           ),
         );
     Widget companyCard() {
@@ -178,44 +193,56 @@ class _ListPageState extends State<SelectionPage> {
 
     Widget bottomNavigationBar() {
       return Container(
-        // elevation: 0,
         child: Container(
-          height: 50,
+          height: height * 0.080,
           width: width,
           child: Row(
             children: <Widget>[
-              SizedBox(width: 30.0),
+              SizedBox(width: 25.0),
               IconButton(
                 color: LightColors.kDarkBlue,
                 icon: Icon(
-                  Icons.menu,
+                  Icons.info_outline,
                   size: 35,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AboutUsPage()));
+                },
               ),
               Spacer(),
               IconButton(
                 color: LightColors.kDarkBlue,
                 icon: Icon(
-                  FontAwesomeIcons.calendarAlt,
-                  size: 30,
+                  Icons.book_outlined,
+                  size: 35,
                 ),
                 onPressed: () async {
-                  final UserDataProvider userDataProvider =
-                      Provider.of<UserDataProvider>(context, listen: false);
+                  if (isEnabled == true) {
+                    setState(() {
+                      isEnabled = false;
+                    });
+                    final UserDataProvider userDataProvider =
+                        Provider.of<UserDataProvider>(context, listen: false);
 
-                  final Map<String, dynamic> _userData = {
-                    'uniqueIdentifier': _identifier,
-                  };
-                  _addData();
-                  final Map<String, dynamic> successInfo =
-                      await userDataProvider.getUserData(_userData);
+                    final Map<String, dynamic> _userData = {
+                      'uniqueIdentifier': _identifier,
+                    };
+                    _addData();
+                    final Map<String, dynamic> successInfo =
+                        await userDataProvider.getUserData(_userData);
 
-                  if (successInfo['success']) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => UserBooking()));
-                  } else {
-                    print("something went wrong");
+                    if (successInfo['success']) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserBooking()));
+                      setState(() {
+                        isEnabled = true;
+                      });
+                    } else {
+                      print("something went wrong");
+                    }
                   }
                 },
               ),
@@ -233,39 +260,41 @@ class _ListPageState extends State<SelectionPage> {
         child: Text("OK"),
         onPressed: hasdata
             ? () async {
-                final InfolistProvider infolistProvider =
-                    Provider.of<InfolistProvider>(context, listen: false);
-                // if (await canLaunch(qrData)) {
-                // VCard vc = VCard(qrData);
-                // print(vc.organisation);
-                var companyID = companyWid.split('-')[1];
-                print(companyWid);
-                print(vc.name);
-                // var id = companyWid;
-                // var launchAddress = qrData.split('-')[0];
-                // print(qrData);
-                // print(launchAddress);
-                //  await launch(launchAddress);
-
-                final Map<String, dynamic> _infoData = {'userId': companyID};
-
-                final Map<String, dynamic> successInfo =
-                    await infolistProvider.getInfo(_infoData);
-                if (successInfo['success']) {
-                  print(infolistProvider.currentInfo.appointmentcalendar);
-                  print(infolistProvider.currentInfo.bookingcalendar);
-                  timeSlotsProvider.getTimeSlots({
-                    'appointmentcalendar':
-                        infolistProvider.currentInfo.appointmentcalendar,
-                    'bookingcalendar':
-                        infolistProvider.currentInfo.bookingcalendar
+                if (isEnabled == true) {
+                  setState(() {
+                    isEnabled = false;
                   });
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SelectionPage()));
+                  final InfolistProvider infolistProvider =
+                      Provider.of<InfolistProvider>(context, listen: false);
+                  var companyID =
+                      companyWid.split('-')[1]; //10IT-ZAfxyr2CwLa5VxL0EpmF
+                  print(companyWid);
+                  print(vc.name);
+
+                  final Map<String, dynamic> _infoData = {'userId': companyID};
+
+                  final Map<String, dynamic> successInfo =
+                      await infolistProvider.getInfo(_infoData);
+                  if (successInfo['success']) {
+                    print(infolistProvider.currentInfo.appointmentcalendar);
+                    print(infolistProvider.currentInfo.bookingcalendar);
+                    timeSlotsProvider.getTimeSlots({
+                      'appointmentcalendar':
+                          infolistProvider.currentInfo.appointmentcalendar,
+                      'bookingcalendar':
+                          infolistProvider.currentInfo.bookingcalendar
+                    });
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SelectionPage()));
+                    setState(() {
+                      isEnabled = true;
+                    });
+                  } else {
+                    print("something went wrong");
+                  }
                 }
-                // } else {
-                //   throw 'Could not launch ';
-                // }
               }
             : null,
       );
@@ -302,48 +331,28 @@ class _ListPageState extends State<SelectionPage> {
         child: Column(
           children: <Widget>[
             TopContainer(
-              height: 200,
+              height: height * 0.3400,
               width: width,
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: <Widget>[
-                    //     Icon(Icons.menu,
-                    //         color: LightColors.kDarkBlue, size: 30.0),
-                    //     Icon(Icons.search,
-                    //         color: LightColors.kDarkBlue, size: 25.0),
-                    //   ],
-                    // ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(5.0, 7.0, 3, 0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          CircularPercentIndicator(
-                            radius: 90.0,
-                            lineWidth: 8.0,
-                            animation: true,
-                            percent: 0.75,
-                            circularStrokeCap: CircularStrokeCap.round,
-                            progressColor: LightColors.kRed,
-                            backgroundColor: LightColors.kDarkYellow,
-                            center: CircleAvatar(
-                              backgroundColor: LightColors.kBlue,
-                              radius: 35.0,
-                              backgroundImage: AssetImage(
-                                'assets/images/sampleLogo2.png',
-                              ),
-                            ),
+                          Image.asset(
+                            'assets/images/logo-small.png',
+                            height: height * 0.1,
+                            width: 85,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Container(
                                 child: Text(
-                                  'Book Me...',
+                                  'Book Me.LK',
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontSize: 30.0,
@@ -383,11 +392,9 @@ class _ListPageState extends State<SelectionPage> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              // subheading('My companies'),
-                            ],
+                            children: <Widget>[],
                           ),
-                          SizedBox(height: 15.0),
+                          SizedBox(height: height * 0.0350),
                           companyCard()
                         ],
                       ),
@@ -414,9 +421,6 @@ class _ListPageState extends State<SelectionPage> {
             qrData = data.rawContent;
             hasdata = true;
           });
-          //  // if (await canLaunch(qrData)) {
-          //     alertMassage();
-          //  // }
           print(qrData);
           print(qrData.isNotEmpty);
           if (qrData.isNotEmpty == true) {
@@ -433,12 +437,6 @@ class _ListPageState extends State<SelectionPage> {
     print(_identifier);
   }
 
-  // List<String> _getList() {
-  //   SharedPreferences prefs;
-  //   var yourList = prefs.getStringList("key");
-  //   print(yourList);
-  // }
-
   Future<List<Company>> getCompanies() async {
     var gatCompaniesFromCache = await getData();
     print(gatCompaniesFromCache);
@@ -447,7 +445,7 @@ class _ListPageState extends State<SelectionPage> {
     gatCompaniesFromCache.forEach((element) {
       list.add(new Company(
           name: element['name'],
-          address: element['address'],
+          shortAddress: element['shortAddress'],
           id: element['id'], //BvarFwPaBYtAuZTnkGMN,//3k0n6tMxJf6Rw8izDiZi
           logo: element['logo']));
     });
@@ -477,7 +475,6 @@ class _ListPageState extends State<SelectionPage> {
 
     var cacheData =
         getObjList<CustomModel>("data", (v) => CustomModel.fromJson(v));
-    // print(cacheData);
     return cacheData;
   }
 }

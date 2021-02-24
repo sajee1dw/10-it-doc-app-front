@@ -6,7 +6,11 @@ class TimeSlot {
   String fullTitle;
 
   TimeSlot(
-      {this.date, this.startTime, this.endTime, this.available, this.fullTitle});
+      {this.date,
+      this.startTime,
+      this.endTime,
+      this.available,
+      this.fullTitle});
 
   TimeSlot.fromJson(Map<String, dynamic> parsedJson) {
     this.date = parsedJson['date'];

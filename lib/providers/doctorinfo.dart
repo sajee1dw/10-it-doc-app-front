@@ -1,6 +1,6 @@
-import 'package:doc/_services/_httpService.dart';
-import 'package:doc/models/cacheData.dart';
-import 'package:doc/models/info.dart';
+import 'package:bookme/_services/_httpService.dart';
+import 'package:bookme/models/cacheData.dart';
+import 'package:bookme/models/info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -16,17 +16,16 @@ class InfolistProvider with ChangeNotifier {
   String key;
   Future<Map<String, dynamic>> getInfo(data) async {
     try {
+      isLoading = true;
       final http.Response response = await HttpService.getDocInfoList(data);
-      print("Doc Info" + response.body);
+      print("Client Info" + response.body);
       if (response.statusCode == 200) {
         final Map<String, dynamic> map = json.decode(response.body);
-        // print(map);
         _currentInfo = Info.fromJson(map);
-        //  print(_currentInfo.docArea);
 
-        _addData();
+        //    _addData();
         init();
-
+        isLoading = false;
         return {'success': true, 'doctor': _currentInfo};
       } else {
         isLoading = false;
@@ -37,11 +36,11 @@ class InfolistProvider with ChangeNotifier {
     }
   }
 
-  _addData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('docArea', _currentInfo.docArea);
-    prefs.setString('docSuburb', _currentInfo.docSuburb);
-  }
+  // _addData() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //  // prefs.setString('docArea', _currentInfo.docArea);
+  //  // prefs.setString('docSuburb', _currentInfo.docSuburb);
+  // }
 
   init() async {
     prefs = await SharedPreferences.getInstance();
@@ -57,8 +56,8 @@ class InfolistProvider with ChangeNotifier {
       await putObjectList("data", [
         CustomModel(
             id: _currentInfo.id,
-            name: _currentInfo.docName,
-            address: _currentInfo.docAddress,
+            name: _currentInfo.clientName,
+            shortAddress: _currentInfo.shortAddress,
             logo: _currentInfo.logo),
       ]);
     } else {
@@ -78,8 +77,8 @@ class InfolistProvider with ChangeNotifier {
         List<Object> newcacheDataList = [
           CustomModel(
               id: _currentInfo.id,
-              name: _currentInfo.docName,
-              address: _currentInfo.docAddress,
+              name: _currentInfo.clientName,
+              shortAddress: _currentInfo.shortAddress,
               logo: _currentInfo.logo)
         ];
         List<String> _dataList = newcacheDataList?.map((value) {
@@ -125,8 +124,8 @@ class InfolistProvider with ChangeNotifier {
 //   List<Object> newcacheDataList = [
 //     CustomModel(
 //         id: _currentInfo.id,
-//         name: _currentInfo.docName,
-//         address: _currentInfo.docAddress,
+//         name: _currentInfo.clientName,
+//         address: _currentInfo.address,
 //         logo: _currentInfo.logo)
 //   ];
 //   List<String> _dataList = newcacheDataList?.map((value) {

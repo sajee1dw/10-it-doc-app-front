@@ -1,5 +1,5 @@
-import 'package:doc/_services/_httpService.dart';
-import 'package:doc/models/userData.dart';
+import 'package:bookme/_services/_httpService.dart';
+import 'package:bookme/models/userData.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -32,7 +32,7 @@ class UserDataProvider with ChangeNotifier {
         return {'success': false, 'error': "something went wrong"};
       }
     } catch (e) {
-      throw Exception(e.toString());
+      throw Exception(e.message.toString());
     }
   }
  

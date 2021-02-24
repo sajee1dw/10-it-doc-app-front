@@ -5,8 +5,6 @@ class HttpService {
   static const String _BASEURL =
       'https://us-central1-bookme10it.cloudfunctions.net';
 
-  // static Future<http.Response> getAreaList() =>
-  //     http.get(_BASEURL + '/GetDoctorsAreaList');
   static Future<http.Response> getDocInfoList(data) =>
       http.post(_BASEURL + '/GetInfo',
           body: json.encode(data),

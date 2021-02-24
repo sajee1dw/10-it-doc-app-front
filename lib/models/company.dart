@@ -1,19 +1,19 @@
 class Company {
   String name;
-  String address;
+  String shortAddress;
   String id;
   String logo;
 
   Company({
     this.name,
-    this.address,
+    this.shortAddress,
     this.id,
     this.logo,
   });
 
   Company.fromJson(Map<String, dynamic> parsedJson) {
     this.name = parsedJson['name'];
-    this.address = parsedJson['address'];
+    this.shortAddress = parsedJson['shortAddress'];
     this.id = parsedJson['phone'];
     this.logo = parsedJson['appointmentcalendar'];
   }

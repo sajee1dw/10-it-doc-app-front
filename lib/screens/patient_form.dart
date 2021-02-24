@@ -1,9 +1,10 @@
-import 'package:doc/models/timeSlot.dart';
-import 'package:doc/providers/doctorinfo.dart';
-import 'package:doc/theme/colors/light_colors.dart';
+import 'package:bookme/models/timeSlot.dart';
+import 'package:bookme/providers/doctorinfo.dart';
+import 'package:bookme/theme/colors/light_colors.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import '../providers/patient.dart';
-import 'package:doc/screens/receipt.dart';
+import 'package:bookme/screens/receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +24,7 @@ DateFormat formated = new DateFormat("HH:mm");
 class _PatientFormState extends State<PatientForm> {
   Map<String, dynamic> _formData = <String, dynamic>{};
   String _identifier = 'Unknown';
-  String _now = new DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now());
+  String _now = new DateFormat("yyyy-MM-dd hh:mm:ss a").format(DateTime.now());
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController patientController = TextEditingController();
@@ -61,13 +62,13 @@ class _PatientFormState extends State<PatientForm> {
     try {
       deviceId = await PlatformDeviceId.getDeviceId;
     } on PlatformException {
-      deviceId = 'Failed to get deviceId.';
+      deviceId = 'Failed to get deviceId......';
     }
     if (!mounted) return;
 
     setState(() {
       _identifier = deviceId;
-      print("****deviceId->$_identifier");
+      print("deviceId------->     $_identifier");
     });
   }
 
@@ -75,56 +76,58 @@ class _PatientFormState extends State<PatientForm> {
   Widget build(BuildContext context) {
     final InfolistProvider infolistProvider =
         Provider.of<InfolistProvider>(context, listen: true);
-    print("creater Date" + _now);
+    final PatientProvider patientProvider =
+        Provider.of<PatientProvider>(context, listen: false);
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    double size = MediaQuery.of(context).size.width;
+    print("creater Date : " + _now);
     return Scaffold(
       appBar: AppBar(
           leading: new IconButton(
-            icon: new Icon(Icons.arrow_back_ios, color: Colors.white, size: 35),
+            icon: new Icon(Icons.arrow_back_ios,
+                color: Colors.white, size: size * 0.050),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          toolbarHeight: 80.0,
+          toolbarHeight: height * 0.10,
           backgroundColor: LightColors.kDarkYellow,
           title: Center(
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Container(
-                  // height: 120.0,
                   color: LightColors.kDarkYellow,
                   child: Row(
                     children: <Widget>[
-                      //  Container(
-                      //    color: Colors.red,
-                      //    child:
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
+                            padding: EdgeInsets.only(left: width * 0.2),
                             child: Text(
                               infolistProvider.currentInfo != null
-                                  ? 
-                                      infolistProvider.currentInfo.docName
-                                          .toUpperCase()
+                                  ? infolistProvider.currentInfo.clientName
+                                      .toUpperCase()
                                   : "",
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 20,
+                                fontSize: size * 0.050,
                                 fontWeight: FontWeight.w800,
                               ),
                               textAlign: TextAlign.center,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(17.0, 5.0, 0, 0),
+                            padding: EdgeInsets.fromLTRB(
+                                width * 0.010, height * 0.005, 0, 0),
                             child: Text(
                               infolistProvider.currentInfo != null
-                                  ? infolistProvider.currentInfo.docAddress
+                                  ? infolistProvider.currentInfo.address
                                   : "",
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 16,
+                                fontSize: size * 0.040,
                                 fontWeight: FontWeight.w500,
                               ),
                               textAlign: TextAlign.start,
@@ -132,8 +135,6 @@ class _PatientFormState extends State<PatientForm> {
                           ),
                         ],
                       ),
-                      //  )
-                      // ),
                     ],
                   ),
                 ),
@@ -142,61 +143,8 @@ class _PatientFormState extends State<PatientForm> {
           )),
       body: Column(
         children: <Widget>[
-          // Expanded(
-          //   flex: 2,
-          // child:
-          // Container(
-          //   height: 80.0,
-          //   color: LightColors.kDarkYellow,
-          //   child: Row(
-          //     children: <Widget>[
-          //       //  Container(
-          //       //    color: Colors.red,
-          //       //    child:
-          //       Column(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         crossAxisAlignment: CrossAxisAlignment.start,
-          //         children: <Widget>[
-          //           Padding(
-          //             padding: const EdgeInsets.fromLTRB(150.0, 0.0, 0, 0),
-          //             child: Text(
-          //               infolistProvider.currentInfo != null
-          //                   ? 'Dr : ' +
-          //                       infolistProvider.currentInfo.docName
-          //                           .toUpperCase()
-          //                   : "",
-          //               style: TextStyle(
-          //                 color: Colors.black,
-          //                 fontSize: 20,
-          //                 fontWeight: FontWeight.w800,
-          //               ),
-          //               textAlign: TextAlign.center,
-          //             ),
-          //           ),
-          //           Padding(
-          //             padding: const EdgeInsets.fromLTRB(140.0, 5.0, 0, 0),
-          //             child: Text(
-          //               infolistProvider.currentInfo != null
-          //                   ? infolistProvider.currentInfo.docAddress
-          //                   : "",
-          //               style: TextStyle(
-          //                 color: Colors.black,
-          //                 fontSize: 16,
-          //                 fontWeight: FontWeight.w500,
-          //               ),
-          //               textAlign: TextAlign.start,
-          //             ),
-          //           ),
-          //         ],
-          //       ),
-          //       //  )
-          //       // ),
-          //     ],
-          //   ),
-          // ),
-          // ),
           Container(
-            height: 70.0,
+            height: height * 0.12,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -211,7 +159,8 @@ class _PatientFormState extends State<PatientForm> {
               children: <Widget>[
                 Expanded(
                   child: Container(
-                    margin: const EdgeInsets.fromLTRB(17.0, 0, 8.0, 0),
+                    margin:
+                        EdgeInsets.fromLTRB(width * 0.04, 0, width * 0.008, 0),
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                         borderRadius: new BorderRadius.circular(30.0),
@@ -225,7 +174,7 @@ class _PatientFormState extends State<PatientForm> {
                             'Date : ',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: size * 0.04,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -233,7 +182,7 @@ class _PatientFormState extends State<PatientForm> {
                             '${widget.timeSlot.date}', //set date
                             style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 18,
+                              fontSize: size * 0.04,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -243,7 +192,8 @@ class _PatientFormState extends State<PatientForm> {
                 ),
                 Expanded(
                   child: Container(
-                    margin: const EdgeInsets.fromLTRB(8.0, 0, 17.0, 0),
+                    margin:
+                        EdgeInsets.fromLTRB(width * 0.017, 0, width * 0.04, 0),
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                         borderRadius: new BorderRadius.circular(30.0),
@@ -257,7 +207,7 @@ class _PatientFormState extends State<PatientForm> {
                             'Time : ',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: size * 0.04,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -266,7 +216,7 @@ class _PatientFormState extends State<PatientForm> {
                             //'${widget.timeSlot.startTime}', //set time
                             style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 18,
+                              fontSize: size * 0.04,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -277,11 +227,7 @@ class _PatientFormState extends State<PatientForm> {
             ),
           ),
           Expanded(
-              // children: <Widget>[
               child: Container(
-                  //  width: 100,
-                  // height: 700,
-                  // color: Colors.yellow[200],
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -297,19 +243,9 @@ class _PatientFormState extends State<PatientForm> {
                     child: Column(children: <Widget>[
                       Align(
                         alignment: Alignment.centerLeft,
-                        // child: Padding(
-                        //   padding: const EdgeInsets.all(15.0),
-                        //   child: Text(
-                        //     'Please complete the form below',
-                        //     style: TextStyle(
-                        //         color: Colors.red[600],
-                        //         fontSize: 17.0,
-                        //         fontWeight: FontWeight.w600),
-                        //   ),
-                        // )
                       ),
                       Container(
-                          width: 350,
+                          width: width * 0.850,
                           child: Form(
                               key: _formKey,
                               autovalidate: _autoValidate,
@@ -326,19 +262,21 @@ class _PatientFormState extends State<PatientForm> {
   Widget formPatient() {
     final InfolistProvider infolistProvider =
         Provider.of<InfolistProvider>(context, listen: true);
-    // FocusNode myFocusNode = new FocusNode();
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    double size = MediaQuery.of(context).size.width;
     return new Column(
       children: <Widget>[
         Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 15.0, horizontal: 1.0),
+              padding: EdgeInsets.symmetric(
+                  vertical: height * 0.015, horizontal: width * 0.001),
               child: Text(
                 'Who make the reservation?'.toUpperCase(),
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 15,
+                  fontSize: size * 0.04,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -352,15 +290,11 @@ class _PatientFormState extends State<PatientForm> {
           decoration: const InputDecoration(
             labelText: 'Name',
             labelStyle: TextStyle(
-                color: Colors.grey,
-                fontSize: 20,
-                fontWeight: FontWeight.w500 //Colors.teal[200]
-                ),
+                color: Colors.grey, fontSize: 20, fontWeight: FontWeight.w500),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.teal)),
             focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.black) //Colors.teal[200]
-                ),
+                borderSide: BorderSide(color: Colors.black)),
           ),
           keyboardType: TextInputType.text,
           validator: validateName,
@@ -381,81 +315,6 @@ class _PatientFormState extends State<PatientForm> {
                 ),
               ),
             )),
-        // new TextFormField(
-        //   controller: patientController,
-        //   autofocus: true,
-        //   style: new TextStyle(
-        //     color: Colors.grey,
-        //     fontFamily: 'Sansation',
-        //   ),
-        //   decoration: const InputDecoration(
-        //     labelText: 'Patient Name',
-        //     labelStyle: TextStyle(
-        //       color: Colors.black, //Colors.teal[200]
-        //     ),
-        //     enabledBorder: UnderlineInputBorder(
-        //         borderSide: BorderSide(color: Colors.teal)),
-        //     focusedBorder: UnderlineInputBorder(
-        //       borderSide:
-        //           BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
-        //     ),
-        //   ),
-        //   keyboardType: TextInputType.text,
-        //   validator: validatepatientName,
-        //   onSaved: (String value) {
-        //     _formData['Patient Name'] = value;
-        //   },
-        // ),
-        // new TextFormField(
-        //   controller: idController,
-        //   autofocus: true,
-        //   style: new TextStyle(
-        //     color: Colors.grey,
-        //     fontFamily: 'Sansation',
-        //   ),
-        //   decoration: const InputDecoration(
-        //     labelText: 'ID Number',
-        //     labelStyle: TextStyle(
-        //       color: Colors.black, //Colors.teal[200]
-        //     ),
-        //     enabledBorder: UnderlineInputBorder(
-        //         borderSide: BorderSide(color: Colors.teal)),
-        //     focusedBorder: UnderlineInputBorder(
-        //       borderSide:
-        //           BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
-        //     ),
-        //   ),
-        //   keyboardType: TextInputType.text,
-        //   validator: validateIDnumber,
-        //   onSaved: (String value) {
-        //     _formData['IDNumber'] = value;
-        //   },
-        // ),
-        // new TextFormField(
-        //   controller: ageController,
-        //   autofocus: true,
-        //   style: new TextStyle(
-        //     color: Colors.grey,
-        //     fontFamily: 'Sansation',
-        //   ),
-        //   decoration: const InputDecoration(
-        //     labelText: 'Age',
-        //     labelStyle: TextStyle(
-        //       color: Colors.black,
-        //     ),
-        //     enabledBorder: UnderlineInputBorder(
-        //         borderSide: BorderSide(color: Colors.teal)),
-        //     focusedBorder: UnderlineInputBorder(
-        //       borderSide:
-        //           BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
-        //     ),
-        //   ),
-        //   keyboardType: TextInputType.text,
-        //   validator: validateAge,
-        //   onSaved: (String value) {
-        //     _formData['Age'] = value;
-        //   },
-        // ),
         new TextFormField(
           controller: addressController,
           autofocus: true,
@@ -466,15 +325,11 @@ class _PatientFormState extends State<PatientForm> {
           decoration: const InputDecoration(
             labelText: 'Address',
             labelStyle: TextStyle(
-                color: Colors.grey,
-                fontSize: 20,
-                fontWeight: FontWeight.w500 //Colors.teal[200]
-                ),
+                color: Colors.grey, fontSize: 20, fontWeight: FontWeight.w500),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.teal)),
             focusedBorder: UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
+              borderSide: BorderSide(color: Color(0xFF80CBC4)),
             ),
           ),
           keyboardType: TextInputType.text,
@@ -493,15 +348,11 @@ class _PatientFormState extends State<PatientForm> {
           decoration: const InputDecoration(
             labelText: 'Mobile',
             labelStyle: TextStyle(
-                color: Colors.grey,
-                fontSize: 20,
-                fontWeight: FontWeight.w500 //Colors.teal[200]
-                ),
+                color: Colors.grey, fontSize: 20, fontWeight: FontWeight.w500),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.teal)),
             focusedBorder: UnderlineInputBorder(
-              borderSide:
-                  BorderSide(color: Color(0xFF80CBC4)), //Colors.teal[200]
+              borderSide: BorderSide(color: Color(0xFF80CBC4)),
             ),
           ),
           keyboardType: TextInputType.phone,
@@ -511,7 +362,7 @@ class _PatientFormState extends State<PatientForm> {
           },
         ),
         new SizedBox(
-          height: 10.0,
+          height: 50.0,
         ),
         Padding(
           padding: const EdgeInsets.all(10.0),
@@ -528,19 +379,16 @@ class _PatientFormState extends State<PatientForm> {
                   'eventName': nameController.text,
 
                   'startTime':
-                      '${widget.timeSlot.date}T${formated.format(DateTime.parse(widget.timeSlot.date + 'T' + widget.timeSlot.startTime + '+00:00').toLocal())}:00', //10.00==>04.30==>10.00
+                      '${widget.timeSlot.date}T${formated.format(DateTime.parse(widget.timeSlot.date + 'T' + widget.timeSlot.startTime + '+00:00').toLocal())}:00.000Z', //10.00==>04.30==>10.00
                   //'${widget.timeSlot.date}T${widget.timeSlot.startTime}:00',//04.30==>10.00==>04.30
                   'endTime':
-                      '${widget.timeSlot.date}T${formated.format(DateTime.parse(widget.timeSlot.date + 'T' + widget.timeSlot.endTime + '+00:00').toLocal())}:00',
+                      '${widget.timeSlot.date}T${formated.format(DateTime.parse(widget.timeSlot.date + 'T' + widget.timeSlot.endTime + '+00:00').toLocal())}:00.000Z',
                   //'${widget.timeSlot.date}T${widget.timeSlot.endTime}:00',
                   'fullTitle': '${widget.timeSlot.fullTitle}',
                   'name': nameController.text,
-                  //'patientName': patientController.text,
-                  //'idno': idController.text,
-                  //'age': ageController.text,
                   'address': addressController.text,
                   'mobile': mobileController.text,
-                  'doctorname': infolistProvider.currentInfo.docName,
+                  'clientName': infolistProvider.currentInfo.clientName,
                   'bookingcalendar':
                       infolistProvider.currentInfo.bookingcalendar,
                   'uniqueIdentifier': _identifier,
@@ -552,12 +400,8 @@ class _PatientFormState extends State<PatientForm> {
                 print(_formData);
 
                 if (successInfo['success']) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ReceiptPage(
-                              //patient: patient.currentPatient
-                              )));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ReceiptPage()));
                 } else {
                   print("something went wrong");
                 }
@@ -570,26 +414,20 @@ class _PatientFormState extends State<PatientForm> {
             child: Padding(
               padding: EdgeInsets.all(8),
               child: Container(
-                width: 95,
+                width: width * 0.29,
                 child: Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      // Expanded(
                       Text(
-                        'confirm',
+                        'Confirm',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: size * 0.05,
                           fontWeight: FontWeight.w700, //
                           color: Colors.white,
                         ),
                       ),
-                      // Icon(
-                      //   Icons.navigate_next,
-                      //   color: Colors.white,
-                      //   //size: 22,
-                      // )
                     ],
                   ),
                 ),
